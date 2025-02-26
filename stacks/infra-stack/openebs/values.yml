@@ -4,6 +4,10 @@ openebs-crds:
       enabled: true
       keep: true
 
+localpv-provisioner:
+  localpv:
+    enabled: false
+
 zfs-localpv:
   crds:
     zfsLocalPv:

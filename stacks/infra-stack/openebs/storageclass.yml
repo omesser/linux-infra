@@ -9,5 +9,6 @@ parameters:
   dedup: "off"
   fstype: "zfs"
   poolname: "prismapool/root/k8storage"
+  shared: "yes"
 provisioner: zfs.csi.openebs.io
 volumeBindingMode: WaitForFirstConsumer

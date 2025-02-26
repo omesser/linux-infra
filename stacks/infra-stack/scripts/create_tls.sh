@@ -21,9 +21,8 @@ ensure_directory() {
 }
 
 generate_tls_keys() {
-    log "Generating TLS keys for RabbitMQ..."
+    log "Generating TLS keys for Nginx..."
 
-    # Define TLS folder and file paths
     local tls_folder="/home/prisma/config/nginx/tls/"
     local tls_crt_file="${tls_folder}tls.crt"
     local tls_key_file="${tls_folder}tls.key"
@@ -33,7 +32,7 @@ generate_tls_keys() {
 
     # Check if the TLS certificate and key already exist
     if [[ -f "$tls_crt_file" && -f "$tls_key_file" ]]; then
-        log "Existing TLS keys found. Removing old keys..."
+        log "Existing TLS keys found. Exiting"
         return 0
     fi
 
@@ -71,10 +70,8 @@ create_secrets() {
 
     create_secret "tls" "tls-secret" \
         --key "/home/prisma/config/nginx/tls/tls.key" \
-        --cert "/home/prisma/config/nginx/tls/tls.crt"
+        --cert "/home/prisma/config/nginx/tls/tls.crt" \
         -n "kube-system"
-
-    log "ConfigMaps, Secrets, and Persistent Volumes created successfully."
 }
 
 generate_tls_keys
