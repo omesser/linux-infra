@@ -1,6 +1,7 @@
 {{- $offlineDeploy := (env "OFFLINE_DEPLOY" | default "offline_deploy") -}}
-{{- $third_subnetOctet := (env "THIRD_SUBNET_OCTET" | default "70") -}}
-{{- $second_subnetOctet := (env "SECOND_SUBNET_OCTET" | default "10") -}}
+{{- $thirdSubnetOctet := (env "THIRD_SUBNET_OCTET" | default "10") -}}
+{{- $secondSubnetOctet := (env "SECOND_SUBNET_OCTET" | default "10") -}}
+{{- $project_name := (env "PROJECT_NAME" | default "10") -}}
 
 releases:
   - name: openebs
@@ -41,7 +42,7 @@ releases:
       - ingress-nginx/values.yml
       - controller:
           service:
-            loadBalancerIP: "10.{{ $second_subnetOctet }}.{{ $third_subnetOctet }}.100"
+            loadBalancerIP: "10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.100"
    
 
   - name: metallb
@@ -52,8 +53,8 @@ releases:
     values:
       - metallb:
           addresses: 
-          - "10.{{ $second_subnetOctet }}.{{ $third_subnetOctet }}.100-10.{{ $second_subnetOctet }}.{{ $third_subnetOctet }}.120"
-          - "10.{{ $second_subnetOctet }}.{{ $third_subnetOctet }}.50/32"
+          - "10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.100-10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.120"
+          - "10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.50/32"
 
   - name: pihole
     namespace: pihole
@@ -75,7 +76,8 @@ releases:
     values:
       - pihole/values.yml
       - serviceDns:
-          loadBalancerIP: "10.{{ $second_subnetOctet }}.{{ $third_subnetOctet }}.50"
+          loadBalancerIP: "10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.50"
         serviceWeb:
-          loadBalancerIP: "10.{{ $second_subnetOctet }}.{{ $third_subnetOctet }}.50"
+          loadBalancerIP: "10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.50"
+      - pihole/projects/{{ $project_name }}/values.yml.gotmpl
     

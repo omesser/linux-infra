@@ -1,0 +1,7 @@
+{{- $offlineDeploy := (env "OFFLINE_DEPLOY" | default "offline_deploy") -}}
+{{- $thirdSubnetOctet := (env "THIRD_SUBNET_OCTET" | default "10") -}}
+{{- $secondSubnetOctet := (env "SECOND_SUBNET_OCTET" | default "20") -}}
+
+dnsmasq:
+  customDnsEntries:
+    - address=/app.prismaphotonics.com/10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.100
