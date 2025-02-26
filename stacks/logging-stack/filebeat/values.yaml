@@ -1,32 +1,31 @@
-filebeat:
-  filebeatConfig:
-    filebeat.yml: |
-      filebeat.inputs:
-      - type: filestream
-        paths:
-          - /var/log/syslog
-          - /var/log/auth.log
-        symlinks: true
-        processors:
-          - add_host_metadata:
-              netinfo.enabled: true
-          - add_fields:
-              target: ''
-              fields:
-                type: syslog
-                
-      filebeat.autodiscover:
-        providers:
-          - type: kubernetes
-            hints.enabled: true
+filebeatConfig:
+  filebeat.yml: |
+    filebeat.inputs:
+    - type: filestream
+      paths:
+        - /var/log/syslog
+        - /var/log/auth.log
+      symlinks: true
+      processors:
+        - add_host_metadata:
+            netinfo.enabled: true
+        - add_fields:
+            target: ''
+            fields:
+              type: syslog
+              
+    filebeat.autodiscover:
+      providers:
+        - type: kubernetes
+          hints.enabled: true
 
-            hints.default_config:
-              type: container
-              paths:
-                - /var/log/containers/*${data.kubernetes.container.id}.log
+          hints.default_config:
+            type: container
+            paths:
+              - /var/log/containers/*${data.kubernetes.container.id}.log
 
-      output.logstash:
-        hosts: ["logstash-logstash:5044"]
+    output.logstash:
+      hosts: ["logstash-logstash:5044"]
 
 resources:
   requests:
