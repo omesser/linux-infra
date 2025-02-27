@@ -1,0 +1,13 @@
+auth:
+  enablePostgresUser: true
+  postgresPassword: "postgres"
+
+primary:
+  persistence:
+    enabled: true
+    size: 50Gi
+  service:
+    type: LoadBalancer
+    loadBalancerIP: 10.10.{subnet_octet}.104
+
+
