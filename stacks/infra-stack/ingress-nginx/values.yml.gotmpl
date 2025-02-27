@@ -1,5 +1,4 @@
-{{- $thirdSubnetOctet := (env "THIRD_SUBNET_OCTET" | default "10") -}}
-{{- $secondSubnetOctet := (env "SECOND_SUBNET_OCTET" | default "10") -}}
+{{- $threeFirstOctets := (env "THREE_FIRST_OCTETS" | default "10.10.10") -}}
 
 controller:
   default-ssl-certificate: "default/tls-secret"
@@ -13,7 +12,7 @@ controller:
 
   service:
     type: LoadBalancer
-    loadBalancerIP: "10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.100"
+    loadBalancerIP: "{{ $threeFirstOctets }}.100"
 
   config:
     ssl-redirect: "true"

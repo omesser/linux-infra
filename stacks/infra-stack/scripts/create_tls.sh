@@ -23,7 +23,7 @@ ensure_directory() {
 generate_tls_keys() {
     log "Generating TLS keys for Nginx..."
 
-    local tls_folder="/home/prisma/config/nginx/tls/"
+    local tls_folder="/home/$LINUX_USER/config/nginx/tls/"
     local tls_crt_file="${tls_folder}tls.crt"
     local tls_key_file="${tls_folder}tls.key"
 
@@ -69,8 +69,8 @@ create_secrets() {
     }
 
     create_secret "tls" "tls-secret" \
-        --key "/home/prisma/config/nginx/tls/tls.key" \
-        --cert "/home/prisma/config/nginx/tls/tls.crt" \
+        --key "/home/$LINUX_USER/config/nginx/tls/tls.key" \
+        --cert "/home/$LINUX_USER/config/nginx/tls/tls.crt" \
         -n "kube-system"
 }
 

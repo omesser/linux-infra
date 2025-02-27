@@ -1,9 +1,8 @@
-{{- $thirdSubnetOctet := (env "THIRD_SUBNET_OCTET" | default "10") -}}
-{{- $secondSubnetOctet := (env "SECOND_SUBNET_OCTET" | default "10") -}}
+{{- $threeFirstOctets := (env "THREE_FIRST_OCTETS" | default "10.10.10") -}}
 
 service:
   type: LoadBalancer
-  loadBalancerIP: 10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.106
+  loadBalancerIP: {{ $threeFirstOctets }}.101
 
 dashboard:
   persistence:
