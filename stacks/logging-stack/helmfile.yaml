@@ -1,6 +1,4 @@
 {{- $offlineDeploy := (env "OFFLINE_DEPLOY" | default "offline_deploy") -}}
-{{- $thirdSubnetOctet := (env "THIRD_SUBNET_OCTET" | default "10") -}}
-{{- $secondSubnetOctet := (env "SECOND_SUBNET_OCTET" | default "10") -}}
 
 releases:
   - name: event-exporter
@@ -22,20 +20,10 @@ releases:
         args: ["apply", "-f", "elasticsearch/snapshots-pvc.yml"]
       - events: ["postsync"]
         showlogs: true
-        command: "bash"
-        args:
-          - "-c"
-          - |
-              echo "Waiting for elasticsearch pods to appear..."
-              until kubectl get pods -n elk -l release=elasticsearch --no-headers | grep -q .; do
-                sleep 1
-              done
-              echo "Elasticsearch pods detected. Waiting for them to be Ready..."
-              kubectl wait --for=condition=Ready pod -n elk -l release=elasticsearch --timeout=600s
+        command: "kubectl"
+        args: ["wait", "--for=condition=Ready", "pod", "-n", "elk", "-l", "release=elasticsearch", "--timeout=600s"]
     values:
-      - elasticsearch/values.yaml
-      - service:
-          loadBalancerIP: 10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.105
+      - elasticsearch/values.yaml.gotmpl
 
   - name: kibana
     namespace: elk

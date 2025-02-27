@@ -1,0 +1,7 @@
+{{- $thirdSubnetOctet := (env "THIRD_SUBNET_OCTET" | default "10") -}}
+{{- $secondSubnetOctet := (env "SECOND_SUBNET_OCTET" | default "20") -}}
+
+metallb:
+    addresses: 
+    - "10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.100-10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.120"
+    - "10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.50/32"

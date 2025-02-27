@@ -1,0 +1,10 @@
+{{- $thirdSubnetOctet := (env "THIRD_SUBNET_OCTET" | default "10") -}}
+{{- $secondSubnetOctet := (env "SECOND_SUBNET_OCTET" | default "10") -}}
+
+service:
+  type: LoadBalancer
+  loadBalancerIP: 10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.106
+
+dashboard:
+  persistence:
+    storageClassName: "openebs-zfspv"

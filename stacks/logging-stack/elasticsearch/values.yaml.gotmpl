@@ -1,3 +1,6 @@
+{{- $thirdSubnetOctet := (env "THIRD_SUBNET_OCTET" | default "10") -}}
+{{- $secondSubnetOctet := (env "SECOND_SUBNET_OCTET" | default "20") -}}
+
 replicas: 1
 
 lifecycle:
@@ -49,6 +52,7 @@ extraVolumeMounts:
 
 service:
   type: LoadBalancer
+  loadBalancerIP: 10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.105
 
 extraEnvs:
   - name: path.repo
