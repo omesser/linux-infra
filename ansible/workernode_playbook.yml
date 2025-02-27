@@ -15,6 +15,10 @@
         file: "{{ versions_file }}"
         name: versions_data
 
+    - name: Debug versions data
+      debug:
+        var: versions_data
+
     - name: Merge default configurations with overrides
       set_fact:
         merged_configurations: "{{ configurations | combine(versions_data.configurations, recursive=True) }}"
@@ -36,7 +40,7 @@
     - role: gpu-driver-install
       when: enable_gpu_driver_install | default(false)
       vars:
-       apt_packages: "{{ merged_configurations.components.gpu_drivers | default([]) }}"
+       gpu_settings: "{{ versions_data.components.gpu_drivers | default([]) }}"
 
 #    - role: network-setup
 #      when: enable_network_setup | default(false)
