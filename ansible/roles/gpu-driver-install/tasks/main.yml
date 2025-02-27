@@ -1,0 +1,19 @@
+---
+- name: Add NVIDIA CUDA repository key
+  apt_key:
+    url: "{{ cuda_repo_key }}"
+    state: present
+
+- name: Add NVIDIA CUDA repository
+  apt_repository:
+    repo: "deb {{ cuda_repo_url }} {{ cuda_repo_distribution }} main"
+    state: present
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install CUDA driver package
+  apt:
+    name: "{{ cuda_driver_package }}"
+    state: present
