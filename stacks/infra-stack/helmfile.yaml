@@ -1,0 +1,55 @@
+{{- $offlineDeploy := (env "OFFLINE_DEPLOY" | default "offline_deploy") -}}
+{{- $project_name := (env "PROJECT_NAME" | default "shaked") -}}
+{{- $linuxUser := (env "LINUX_USER" | default "prisma") -}}
+
+releases:
+  - name: openebs
+    namespace: openebs
+    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/openebs       
+    wait: true
+    timeout: 600
+    values:
+      - openebs/values.yml
+    hooks:
+      - events: ["postsync"]
+        showlogs: true
+        command: "kubectl"
+        args: ["apply", "-f", "openebs/storageclass.yml"]      
+
+  - name: ingress-nginx
+    namespace: kube-system
+    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/ingress-nginx
+    timeout: 600      
+    hooks:
+      - events: ["presync"]
+        showlogs: true
+        command: "bash"
+        args: ["./scripts/create_tls.sh"]
+      - events: ["postsync"]
+        showlogs: true
+        command: "kubectl"
+        args: ["wait", "--for=condition=Ready", "pod", "-n", "kube-system", "-l", "app.kubernetes.io/name=ingress-nginx", "--timeout=600s"]
+    values:
+      - ingress-nginx/values.yml.gotmpl
+
+  - name: metallb
+    namespace: metallb
+    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/metallb      
+    wait: true
+    timeout: 600  
+    values:
+      - metallb/values.yml.gotmpl
+
+  - name: pihole
+    namespace: pihole
+    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/pihole      
+    timeout: 600
+    hooks:
+      - events: ["postsync"]
+        showlogs: true
+        command: "kubectl"
+        args: ["wait", "--for=condition=Ready", "pod", "-n", "pihole", "-l", "release=pihole", "--timeout=600s"]
+    values:
+      - pihole/values.yml.gotmpl
+      - pihole/projects/{{ $project_name }}/values.yml.gotmpl
+    

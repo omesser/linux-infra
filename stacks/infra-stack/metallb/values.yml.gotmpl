@@ -1,0 +1,6 @@
+{{- $threeFirstOctets := (env "THREE_FIRST_OCTETS" | default "10.10.10") -}}
+
+metallb:
+    addresses: 
+    - "{{ $threeFirstOctets }}.100-{{ $threeFirstOctets }}.120"
+    - "{{ $threeFirstOctets }}.50/32"

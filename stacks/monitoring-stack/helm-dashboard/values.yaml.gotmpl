@@ -1,0 +1,9 @@
+{{- $threeFirstOctets := (env "THREE_FIRST_OCTETS" | default "10.10.10") -}}
+
+service:
+  type: LoadBalancer
+  loadBalancerIP: {{ $threeFirstOctets }}.101
+
+dashboard:
+  persistence:
+    storageClassName: "openebs-zfspv"

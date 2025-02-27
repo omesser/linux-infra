@@ -1,0 +1,21 @@
+{{- $threeFirstOctets := (env "THREE_FIRST_OCTETS" | default "10.10.10") -}}
+
+dnsmasq:
+  customDnsEntries:
+    - address=/switch.prismaphotonics.net/{{ $threeFirstOctets }}.1
+    - address=/pandaserver.prismaphotonics.net/{{ $threeFirstOctets }}.100
+    - address=/data-rabbitmq.prismaphotonics.net/{{ $threeFirstOctets }}.101
+    - address=/inner-rabbitmq.prismaphotonics.net/{{ $threeFirstOctets }}.102
+    - address=/mongo.prismaphotonics.net/{{ $threeFirstOctets }}.103
+    - address=/postgres.prismaphotonics.net/{{ $threeFirstOctets }}.104
+    - address=/appserver.prismaphotonics.net/{{ $threeFirstOctets }}.150
+    - address=/controlserver.prismaphotonics.net/{{ $threeFirstOctets }}.151
+    - address=/clientui-1.prismaphotonics.net/{{ $threeFirstOctets }}.200
+    - address=/clientui-2.prismaphotonics.net/{{ $threeFirstOctets }}.201
+    - address=/clientui-3.prismaphotonics.net/{{ $threeFirstOctets }}.202
+    - address=/clientui-4.prismaphotonics.net/{{ $threeFirstOctets }}.203
+    - address=/clientui-5.prismaphotonics.net/{{ $threeFirstOctets }}.204
+    - address=/manageserver.prismaphotonics.net/{{ $threeFirstOctets }}.230
+    - address=/bmcapp.prismaphotonics.net/{{ $threeFirstOctets }}.231
+    - address=/bmcsan.prismaphotonics.net/{{ $threeFirstOctets }}.232
+    - address=/bmccontrol.prismaphotonics.net/{{ $threeFirstOctets }}.233
