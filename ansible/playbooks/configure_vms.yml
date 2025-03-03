@@ -1,6 +1,6 @@
 ---
 - name: Offline Installation Playbook
-  hosts: all
+  hosts: all_vms
   become: true
   gather_facts: true
 
