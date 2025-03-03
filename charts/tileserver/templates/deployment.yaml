@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tileserver-gl.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "tileserver-gl.name" . }}
+    helm.sh/chart: {{ include "tileserver-gl.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "tileserver-gl.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "tileserver-gl.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: tileserver-gl
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+              name: http
+          {{- if .Values.useCustomConfig }}
+          volumeMounts:
+            - name: tileserver-data
+              mountPath: {{ .Values.persistence.mountPath }}
+            - name: tileserver-config
+              mountPath: /etc/tileserver
+          command: ["tileserver-gl"]
+          args:
+            {{ toYaml .Values.args | indent 12 }}
+          {{- else }}
+          volumeMounts:
+            - name: tileserver-data
+              mountPath: {{ .Values.persistence.mountPath }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: tileserver-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | quote }}
+        {{- if .Values.useCustomConfig }}
+        - name: tileserver-config
+          configMap:
+            name: {{ include "tileserver-gl.fullname" . }}-config
+        {{- end }}

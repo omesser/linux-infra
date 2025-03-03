@@ -14,6 +14,13 @@ error_exit() {
     exit 1
 }
 
+wait_for_pod_readiness() {
+  log "Waiting for pod with label release=kibana to be ready..."
+  if ! kubectl wait --for=condition=ready pod -l "app.kubernetes.io/instance=postgresql-dev" -n posgtres-shaked --timeout=180s; then
+      error_exit "Pod with label release=kibana failed to become ready within 180s"
+  fi
+}
+
 init_db() {
   HOST="$THREE_FIRST_OCTETS.104"
   PORT="5672"
@@ -55,3 +62,6 @@ init_db() {
       log "Data already exists. Skipping execution of $DATA_SCRIPT."
   fi
 }
+
+wait_for_pod_readiness
+init_db

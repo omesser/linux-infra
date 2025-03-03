@@ -1,0 +1,30 @@
+replicaCount: 1
+
+image:
+  repository: maptiler/tileserver-gl:v5.2.0-pre.0 
+  tag: offline-v1
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer  # Or NodePort, if you prefer
+  port: 8080
+  loadBalancerIP: null
+persistence:
+  enabled: true
+  existingClaim: "tileserver-pvc"  # The PVC you created
+  mountPath: "/data"              # Where TileServer expects data
+  hostPath: "/home/prisma/map-tiles"
+  capacity: 20Gi
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+useCustomConfig: false
+
+args:
+  - "--config=/etc/tileserver/config.json"
+  - "--port=8080"
