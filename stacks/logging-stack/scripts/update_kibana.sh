@@ -12,7 +12,7 @@ update_kibana_and_searches() {
     log "Updating Kibana theme and uploading saved searches..."
 
     # Define the Kibana URL
-    local kibana_url="https://10.$SECOND_SUBNET_OCTET.$THIRD_SUBNET_OCTET.100/kibana"
+    local kibana_url="https://$THREE_FIRST_OCTETS.100/kibana"
     log "Kibana URL: $kibana_url"
 
     log "Uploading Kibana dataview..."

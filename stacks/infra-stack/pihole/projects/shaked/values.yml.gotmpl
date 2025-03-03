@@ -1,6 +1,8 @@
-{{- $thirdSubnetOctet := (env "THIRD_SUBNET_OCTET" | default "10") -}}
-{{- $secondSubnetOctet := (env "SECOND_SUBNET_OCTET" | default "20") -}}
+{{- $threeFirstOctets := (env "THREE_FIRST_OCTETS" | default "10.10.10") -}}
 
 dnsmasq:
   customDnsEntries:
-    - address=/app.prismaphotonics.com/10.{{ $secondSubnetOctet }}.{{ $thirdSubnetOctet }}.100
+    - address=/app.prismaphotonics.com/{{ $threeFirstOctets }}.100
+    - address=/helm-dashboard.prismaphotonics.com/{{ $threeFirstOctets }}.101
+    - address=/kuberenetes-dashboard.prismaphotonics.com/{{ $threeFirstOctets }}.102
+    - address=/airflow.prismaphotonics.com/{{ $threeFirstOctets }}.104

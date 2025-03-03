@@ -1,1 +1,3 @@
-helm_charts*
+offline_deploy/
+.idea/
+
