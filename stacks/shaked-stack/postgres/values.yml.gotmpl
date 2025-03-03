@@ -1,6 +1,9 @@
+{{- $threeFirstOctets := (env "THREE_FIRST_OCTETS" | default "10.10.10") -}}
+
 auth:
   enablePostgresUser: true
   postgresPassword: "postgres"
+  database: "postgres"
 
 primary:
   persistence:
@@ -8,6 +11,6 @@ primary:
     size: 50Gi
   service:
     type: LoadBalancer
-    loadBalancerIP: 10.10.{subnet_octet}.104
+    loadBalancerIP: "10.10.{{ $threeFirstOctetst }}.104"
 
 

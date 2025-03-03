@@ -8,7 +8,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/home/prisma/config"
+    path: "/home/prisma/shaked/config"
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -33,4 +33,4 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/home/prisma/coordinates"
+    path: "/home/prisma/shaked/coordinates"
