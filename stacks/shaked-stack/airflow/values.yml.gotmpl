@@ -1,3 +1,5 @@
+{{- $threeFirstOctets := (env "THREE_FIRST_OCTETS" | default "10.10.10") -}}
+
 images:
   airflow:
     repository: localhost:5000/262399703539.dkr.ecr.eu-central-1.amazonaws.com/shaked-airflow
@@ -99,6 +101,10 @@ workers:
               storage: 100Mi
           storageClassName: ""
           volumeName: coordinates-pv
+webserver:
+  service:
+    type: loadBalancerIP
+    loadBalancerIP: {{ $threeFirstOctets }}.105
 
 redis:
   persistence:
