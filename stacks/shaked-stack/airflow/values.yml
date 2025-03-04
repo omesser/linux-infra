@@ -99,9 +99,7 @@ workers:
               storage: 100Mi
           storageClassName: ""
           volumeName: coordinates-pv
-redis:7.2-bookworm
-bitnami/postgresql:16.1.0-debian-11-r15
-quay.io/prometheus/statsd-exporter:v0.26.1
+
 redis:
   persistence:
     storageClassName: openebs-zfspv
