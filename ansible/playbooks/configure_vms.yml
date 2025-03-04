@@ -25,6 +25,11 @@
       vars:
        gpu_settings: "{{ versions_data.components.gpu_drivers | default([]) }}"
 
+    - role: gpu-driver-uninstall
+      when: enable_gpu_driver_uninstall | default(false)
+      vars:
+       gpu_settings: "{{ versions_data.components.gpu_drivers | default([]) }}"
+
 #    - role: network-setup
 #      when: enable_network_setup | default(false)
 
