@@ -16,4 +16,4 @@
 - name: Reboot the system after GPU driver uninstallation
   reboot:
     reboot_timeout: 600
-  when: (do_reboot | default(true)) and (uninstall_result.changed | default(false))
+  when: do_reboot | default(true)
