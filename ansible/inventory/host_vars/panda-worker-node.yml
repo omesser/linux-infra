@@ -2,7 +2,8 @@ gpu_driver_version: '10.10.10'
 
 
 enable_apt_install: false
-enable_gpu_driver_install: true
+enable_gpu_driver_install: false
+enable_gpu_driver_uninstall: true
 enable_network_setup: false
 enable_docker_load: false
 enable_helm_install: false
