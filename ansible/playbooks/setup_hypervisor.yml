@@ -4,19 +4,75 @@
   become: true
   gather_facts: true
 
+  # 1) First, load the site’s versions.yml
   pre_tasks:
-    - name: Debug Proxmox API User
+    - name: Show filepath
       debug:
-        msg: "Proxmox API User is: {{ proxmox_host_ip }}"
+        msg: "{{ versions_file }}"
 
+    - name: Load versions file
+      include_vars:
+        file: "{{ versions_file }}"
+        name: versions_data
+
+    - name: Merge default configurations with overrides
+      set_fact:
+        merged_configurations: "{{ configurations | combine(versions_data.configurations, recursive=True) }}"
+
+    - name: Debug versions data
+      debug:
+        var: merged_configurations
+    
         
   roles:
+    # - role: create-template
+    #   vars:
+    #     cloud_init_user: "prisma"
+    #     cloud_init_password: "prisma"
+    #     template_name: "template-name"
+    #     template_vmid: 9000
+    #     proxmox_bridge: "vmbr0"
+    #     proxmox_storage: "local-lvm"
+    #     cloud_image: "/var/lib/vz/template/iso/noble-server-cloudimg-amd64.img"
+    #     net_bridge: "{{ merged_configurations.net_bridge }}"
+    #     # vms: "{{ merged_configurations.vms }}"
+
     - role: create-vms
       vars:
         proxmox_host_ip: "{{ merged_configurations.proxmox_host_ip }}"
         proxmox_user: "{{ merged_configurations.proxmox_user }}"
         proxmox_user_password: "{{ merged_configurations.proxmox_user_password }}"
         proxmox_node: "{{ merged_configurations.proxmox_node }}"
+        cloud_init_user: "prisma1"
+        cloud_init_password: "prisma1"
+        template_name: "template-name"
+        proxmox_storage: "local-lvm"
+        cloud_image: "/var/lib/vz/template/iso/noble-server-cloudimg-amd64.img"
         vms: "{{ merged_configurations.vms }}"
-      tags: vm_creation
+
+    # - role: offline-apt-repo
+    #   when: enable_offline_apt_repo | default(false)
+
+    # - role: apt-install
+    #   when: enable_apt_install | default(false)
+    #   vars:
+    #    apt_packages: "{{ merged_configurations.components.apt_packages | default([]) }}"
+
+#    - role: network-setup
+#      when: enable_network_setup | default(false)
+
+#    - role: local-registry
+#      when: enable_network_setup | default(false)
+
+    # # 4) Docker load if enabled (pass docker_images from versions_data)
+    # - role: docker-load
+    #   when: enable_docker_load | default(false)
+    #   vars:
+    #    docker_images: "{{ merged_configurations.components.docker_images | default([]) }}"
+
+#    # 5) Helm install if enabled (pass helm_charts from versions_data)
+#    - role: helm-install
+#      when: enable_helm_install | default(false)
+#      vars:
+#       helm_charts: "{{ versions_data.helm_charts | default([]) }}"
 

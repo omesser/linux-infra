@@ -1,0 +1,78 @@
+---
+- name: Remove any existing VM with template ID
+  shell: |
+    qm unlock {{ template_vmid }} || true
+    qm destroy {{ template_vmid }} || true
+  ignore_errors: true
+
+
+- name: Check if bridge {{ net_bridge.name }} exists on the host
+  command: ip link show {{ net_bridge.name }}
+  register: bridge_check
+  ignore_errors: yes
+
+- name: Configure bridge interface on Proxmox host
+  become: yes
+  blockinfile:
+    path: /etc/network/interfaces
+    marker: "# {mark} ANSIBLE GENERATED BRIDGE {{ net_bridge.name }}"
+    block: |
+      auto {{ net_bridge.name }}
+      iface {{ net_bridge.name }} inet static
+          address {{ net_bridge.ip }}
+          netmask {{ net_bridge.netmask }}
+          gateway {{ net_bridge.gateway }}
+          bridge_ports {{ net_bridge.interface }}
+          bridge_stp off
+          bridge_fd 0
+#   notify:
+#     - Restart networking
+
+# # Handler to restart networking
+# - name: Restart networking
+#   become: yes
+#   service:
+#     name: networking
+#     state: restarted
+
+- name: Create VM with cloud-init parameters for template
+  shell: |
+    qm create 9000 \
+      --name template-name \
+      --memory 2048 \
+      --cores 2 \
+      --net0 virtio,bridge={{ net_bridge.name }} \
+      --scsihw virtio-scsi-pci \
+      --ciuser prisma \
+      --cipassword "prisma" \
+      --ipconfig0 ip=dhcp \
+      --ostype l26 \
+      --agent 1
+  args:
+    executable: /bin/bash
+
+
+- name: Import disk image into template VM
+  shell: >
+    qm importdisk {{ template_vmid }} {{ cloud_image }} {{ proxmox_storage }}
+  register: import_disk
+
+- name: Attach disk and add cloud-init drive to template VM
+  shell: |
+    qm set 9000 \
+      --scsi0 local-lvm:vm-9000-disk-0 \
+      --boot order=scsi0 \
+      --ide2 local-lvm:cloudinit
+  args:
+    executable: /bin/bash
+
+
+- name: Resize disk (if needed)
+  shell: >
+    qm resize {{ template_vmid }} scsi0 +20G
+  register: resize_disk
+
+- name: Convert VM to a template
+  shell: >
+    qm template {{ template_vmid }}
+  register: convert_template
