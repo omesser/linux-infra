@@ -4,16 +4,25 @@
 releases:
   - name: postgres-shaked
     namespace: postgres-shaked
-    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/postgres
+    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/postgresql
     timeout: 600      
+    hooks:
+      - events: ["postsync"]
+        showlogs: true
+        command: "bash"
+        args: ["./postgres/scripts/database_init.sh"]
     values:
       - postgres/values.yml.gotmpl
       
   - name: airflow
     namespace: airflow
     chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/airflow       
-    wait: true
     timeout: 600
+    hooks:
+      - events: ["presync"]
+        showlogs: true
+        command: "bash"
+        args: ["./airflow/scripts/add_airflow_prerequisites.sh"] 
     values:
       - airflow/values.yml
     
