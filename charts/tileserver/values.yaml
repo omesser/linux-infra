@@ -1,20 +1,25 @@
 replicaCount: 1
 
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  tls: null
+  mapNames: ["satellite"]
+
 image:
-  repository: maptiler/tileserver-gl:v5.2.0-pre.0 
-  tag: offline-v1
+  repository: maptiler/tileserver-gl
+  tag: v5.1.3
   pullPolicy: IfNotPresent
 
 service:
-  type: LoadBalancer  # Or NodePort, if you prefer
-  port: 8080
+  type: LoadBalancer 
+  port: 80
   loadBalancerIP: null
 persistence:
   enabled: true
-  existingClaim: "tileserver-pvc"  # The PVC you created
-  mountPath: "/data"              # Where TileServer expects data
   hostPath: "/home/prisma/map-tiles"
   capacity: 20Gi
+  storageClassName: null
 resources:
   requests:
     cpu: 100m
@@ -23,8 +28,6 @@ resources:
     cpu: 500m
     memory: 512Mi
 
-useCustomConfig: false
-
 args:
-  - "--config=/etc/tileserver/config.json"
-  - "--port=8080"
+  - "--config"
+  - "/data/tileserver.json"

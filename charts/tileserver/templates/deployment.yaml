@@ -24,30 +24,20 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 8080
+            - containerPort: {{ .Values.service.port }}
               name: http
-          {{- if .Values.useCustomConfig }}
           volumeMounts:
             - name: tileserver-data
-              mountPath: {{ .Values.persistence.mountPath }}
-            - name: tileserver-config
-              mountPath: /etc/tileserver
-          command: ["tileserver-gl"]
+              mountPath: /data
           args:
-            {{ toYaml .Values.args | indent 12 }}
-          {{- else }}
-          volumeMounts:
-            - name: tileserver-data
-              mountPath: {{ .Values.persistence.mountPath }}
-          {{- end }}
+            {{- if .Values.args }}
+            {{ toYaml .Values.args | nindent 12 }}
+            {{- end }}
+            - "--port"
+            - "{{ .Values.service.port }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
         - name: tileserver-data
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | quote }}
-        {{- if .Values.useCustomConfig }}
-        - name: tileserver-config
-          configMap:
-            name: {{ include "tileserver-gl.fullname" . }}-config
-        {{- end }}
+            claimName: {{ include "tileserver-gl.fullname" . }}-pvc

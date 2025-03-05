@@ -2,5 +2,5 @@ apiVersion: v2
 name: tileserver-gl
 description: Helm chart for TileServer-GL
 type: application
-version: 0.1.0
+version: 1.0.0
 appVersion: "5.1.3"
