@@ -17,9 +17,8 @@ service:
   loadBalancerIP: null
 persistence:
   enabled: true
-  hostPath: "/home/prisma/map-tiles"
   capacity: 20Gi
-  storageClassName: null
+  storageClassName: openebs-zfspv
 resources:
   requests:
     cpu: 100m
