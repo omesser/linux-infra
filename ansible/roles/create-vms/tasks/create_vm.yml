@@ -21,8 +21,6 @@
     state: present
   register: clone_vm
 
-
-
 # - name: Create VMs on Proxmox
 - name: Update Cloud-Init configuration on the new VM
   community.general.proxmox_kvm:
@@ -33,8 +31,8 @@
     vmid: "{{ vm_params.vmid }}"
     name: "{{ vm_params.name | default(vm_name) }}"
     sshkeys: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
-    ciuser: "{{ cloud_init_user }}"
-    cipassword: "{{ cloud_init_password }}"
+    ciuser: "{{ vm_params.username }}"
+    cipassword: "{{ vm_params.password }}"
     cores: "{{ vm_params.cores | default(2) }}"               # Can be configurable but for now it like this
     memory: "{{ vm_params.memory | default(2048) }}"          # Can be configurable but for now it like this
     scsi:

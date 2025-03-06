@@ -11,40 +11,45 @@
   register: bridge_check
   ignore_errors: yes
 
-- name: Configure bridge interface on Proxmox host
+- name: Delete bridge interface {{ net_bridge.name }} if it exists
   become: yes
-  blockinfile:
-    path: /etc/network/interfaces
-    marker: "# {mark} ANSIBLE GENERATED BRIDGE {{ net_bridge.name }}"
-    block: |
-      auto {{ net_bridge.name }}
-      iface {{ net_bridge.name }} inet static
-          address {{ net_bridge.ip }}
-          netmask {{ net_bridge.netmask }}
-          gateway {{ net_bridge.gateway }}
-          bridge_ports {{ net_bridge.interface }}
-          bridge_stp off
-          bridge_fd 0
-#   notify:
-#     - Restart networking
+  # command: ip link delete {{ net_bridge.name }} type bridge
+  shell: | 
+    ip link set {{ net_bridge.name }} down
+    brctl delbr {{ net_bridge.name }}
+  when: bridge_check.rc == 0
 
-# # Handler to restart networking
+- name: Create bridge {{ net_bridge.name }} using pvesh
+  shell: >
+    pvesh create /nodes/{{ proxmox_node }}/network --iface {{ net_bridge.name }} --type bridge
+
+- name: Configure the bridge {{ net_bridge.name }} using pvesh
+  shell: >
+    pvesh set /nodes/{{ proxmox_node }}/network/{{ net_bridge.name }} --type bridge --cidr {{ net_bridge.cidr }} --autostart
+
+- name: Reloading the Proxmox networking {{ net_bridge.name }} using pvesh
+  shell: >
+    pvesh set /nodes/{{ proxmox_node }}/network
+
+# Handler to restart networking
 # - name: Restart networking
 #   become: yes
 #   service:
 #     name: networking
 #     state: restarted
 
+
+
 - name: Create VM with cloud-init parameters for template
   shell: |
-    qm create 9000 \
-      --name template-name \
+    qm create {{ template_vmid }} \
+      --name {{ template_name }} \
+      --ciuser {{ cloud_init_user }} \
+      --cipassword {{ cloud_init_password }} \
+      --net0 virtio,bridge={{ net_bridge.name }} \
       --memory 2048 \
       --cores 2 \
-      --net0 virtio,bridge={{ net_bridge.name }} \
       --scsihw virtio-scsi-pci \
-      --ciuser prisma \
-      --cipassword "prisma" \
       --ipconfig0 ip=dhcp \
       --ostype l26 \
       --agent 1
@@ -59,10 +64,10 @@
 
 - name: Attach disk and add cloud-init drive to template VM
   shell: |
-    qm set 9000 \
-      --scsi0 local-lvm:vm-9000-disk-0 \
+    qm set {{ template_vmid }} \
+      --scsi0 {{ proxmox_storage }}:vm-{{ template_vmid }}-disk-0 \
       --boot order=scsi0 \
-      --ide2 local-lvm:cloudinit
+      --ide2 {{ proxmox_storage }}:cloudinit
   args:
     executable: /bin/bash
 
