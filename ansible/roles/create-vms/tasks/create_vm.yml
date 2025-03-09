@@ -65,8 +65,8 @@
     delay: 10
     timeout: 300
 
-# - name: Add new VM to in-memory inventory
-#   add_host:
-#     name: "{{ vm_params.name | default(vm_name) }}"
-#     ansible_host: "{{ vm_params.ip }}"
-#     groups: new_vms
+- name: Add new VM to in-memory inventory
+  add_host:
+    name: "{{ vm_params.name | default(vm_name) }}"
+    ansible_host: "{{ vm_params.ip }}"
+    groups: new_vms
