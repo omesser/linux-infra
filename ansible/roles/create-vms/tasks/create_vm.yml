@@ -58,12 +58,12 @@
   delegate_to: localhost
 
 
-# - name: Wait for SSH to become available on the new VM
-#   wait_for:
-#     host: "{{ vm_params.ip }}"
-#     port: 22
-#     delay: 10
-#     timeout: 300
+- name: Wait for SSH to become available on the new VM
+  wait_for:
+    host: "{{ vm_params.ip }}"
+    port: 22
+    delay: 10
+    timeout: 300
 
 # - name: Add new VM to in-memory inventory
 #   add_host:

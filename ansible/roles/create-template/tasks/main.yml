@@ -5,40 +5,8 @@
     qm destroy {{ template_vmid }} || true
   ignore_errors: true
 
-
-- name: Check if bridge {{ net_bridge.name }} exists on the host
-  command: ip link show {{ net_bridge.name }}
-  register: bridge_check
-  ignore_errors: yes
-
-- name: Delete bridge interface {{ net_bridge.name }} if it exists
-  become: yes
-  # command: ip link delete {{ net_bridge.name }} type bridge
-  shell: | 
-    ip link set {{ net_bridge.name }} down
-    brctl delbr {{ net_bridge.name }}
-  when: bridge_check.rc == 0
-
-- name: Create bridge {{ net_bridge.name }} using pvesh
-  shell: >
-    pvesh create /nodes/{{ proxmox_node }}/network --iface {{ net_bridge.name }} --type bridge
-
-- name: Configure the bridge {{ net_bridge.name }} using pvesh
-  shell: >
-    pvesh set /nodes/{{ proxmox_node }}/network/{{ net_bridge.name }} --type bridge --cidr {{ net_bridge.cidr }} --autostart
-
-- name: Reloading the Proxmox networking {{ net_bridge.name }} using pvesh
-  shell: >
-    pvesh set /nodes/{{ proxmox_node }}/network
-
-# Handler to restart networking
-# - name: Restart networking
-#   become: yes
-#   service:
-#     name: networking
-#     state: restarted
-
-
+- name: Create the basic network for the vm template ( currently only bridge )
+  include_tasks: create_network.yml
 
 - name: Create VM with cloud-init parameters for template
   shell: |
@@ -56,7 +24,6 @@
   args:
     executable: /bin/bash
 
-
 - name: Import disk image into template VM
   shell: >
     qm importdisk {{ template_vmid }} {{ cloud_image }} {{ proxmox_storage }}
@@ -70,7 +37,6 @@
       --ide2 {{ proxmox_storage }}:cloudinit
   args:
     executable: /bin/bash
-
 
 - name: Resize disk (if needed)
   shell: >

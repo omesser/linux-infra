@@ -1,0 +1,24 @@
+- name: Check if bridge {{ net_bridge.name }} exists on the host
+  command: ip link show {{ net_bridge.name }}
+  register: bridge_check
+  ignore_errors: yes
+
+- name: Delete bridge interface {{ net_bridge.name }} if it exists
+  become: yes
+  # command: ip link delete {{ net_bridge.name }} type bridge
+  shell: | 
+    ip link set {{ net_bridge.name }} down
+    brctl delbr {{ net_bridge.name }}
+  when: bridge_check.rc == 0
+
+- name: Create bridge {{ net_bridge.name }} using pvesh
+  shell: >
+    pvesh create /nodes/{{ proxmox_node }}/network --iface {{ net_bridge.name }} --type bridge
+
+- name: Configure the bridge {{ net_bridge.name }} using pvesh
+  shell: >
+    pvesh set /nodes/{{ proxmox_node }}/network/{{ net_bridge.name }} --type bridge --cidr {{ net_bridge.cidr }} --autostart
+
+- name: Reloading the Proxmox networking {{ net_bridge.name }} using pvesh
+  shell: >
+    pvesh set /nodes/{{ proxmox_node }}/network
