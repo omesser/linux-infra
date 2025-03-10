@@ -6,6 +6,10 @@ auth:
   database: "postgres"
 
 primary:
+  resources:
+    limits:
+      cpu: 3
+      memory: 3Gi
   persistence:
     enabled: true
     size: 50Gi
