@@ -15,7 +15,6 @@
     api_password: "{{ proxmox_user_password }}"
     node: "{{ proxmox_node }}"
     clone: "{{ template_name }}"
-    newid: "{{ vm_params.vmid }}"
     name: "{{ vm_params.name | default(vm_name) }}"
     storage: "{{ proxmox_storage }}"
     state: present
@@ -28,9 +27,8 @@
     api_user: "{{ proxmox_user }}"
     api_password: "{{ proxmox_user_password }}"
     node: "{{ proxmox_node }}"
-    vmid: "{{ vm_params.vmid }}"
     name: "{{ vm_params.name | default(vm_name) }}"
-    sshkeys: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+    sshkeys: "{{ lookup('file', vm_params.ssh_key_file ) }}"  # Can be configurable but for now it like this
     ciuser: "{{ vm_params.username }}"
     cipassword: "{{ vm_params.password }}"
     cores: "{{ vm_params.cores | default(2) }}"               # Can be configurable but for now it like this
@@ -53,7 +51,7 @@
     api_user: "{{ proxmox_user }}"
     api_password: "{{ proxmox_user_password }}"
     node: "{{ proxmox_node }}"
-    vmid: "{{ vm_params.vmid }}"
+    name: "{{ vm_params.name }}"
     state: started
   delegate_to: localhost
 

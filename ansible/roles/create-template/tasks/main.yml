@@ -15,9 +15,9 @@
       --ciuser {{ cloud_init_user }} \
       --cipassword {{ cloud_init_password }} \
       --net0 virtio,bridge={{ net_bridge.name }} \
-      --memory 2048 \
-      --cores 2 \
-      --scsihw virtio-scsi-pci \
+      --memory {{ memory }} \
+      --cores {{ cores }} \
+      --scsihw {{ scsihw }} \
       --ipconfig0 ip=dhcp \
       --ostype l26 \
       --agent 1

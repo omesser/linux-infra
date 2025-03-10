@@ -19,9 +19,9 @@
         cloud_init_user: "prisma"
         cloud_init_password: "prisma"
         net_bridge: "{{ configuration.net_bridge }}"
-        # memory: 2048
-        # cores: 2
-        # scsihw: virtio-scsi-pci
+        scsihw: virtio-scsi-pci
+        memory: 2048
+        cores: 2
         proxmox_storage: "local-lvm"
         cloud_image: "/var/lib/vz/template/iso/noble-server-cloudimg-amd64.img"
 

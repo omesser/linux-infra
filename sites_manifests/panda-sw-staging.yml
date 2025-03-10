@@ -17,23 +17,20 @@ installation_mode: offline  # or online
 configuration:
   net_bridge:
     name: "vmbrTest"
-    ip: "30.0.0.1"
     netmask: "255.255.255.0"
     cidr: "30.0.0.1/24"
-    # gateway: "20.0.0.1"
-    # interface: "eno2np1"
 
   # vms configuration #
   vms:
     yuval-test:
-      name: "yuval-test"
+      name: "yuval-test11"
       ip: "30.0.0.2"
       username: "prisma"
       password: "prisma"
-      vmid: 300
       dev: true
       type: workernode
       gpu: true
+      ssh_key_file: "/root/.ssh/id_rsa.pub"
       spec:
         components:
           apt_packages:
