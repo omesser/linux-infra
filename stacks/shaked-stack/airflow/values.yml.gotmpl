@@ -103,7 +103,7 @@ workers:
           volumeName: coordinates-pv
 webserver:
   service:
-    type: loadBalancerIP
+    type: LoadBalancer
     loadBalancerIP: {{ $threeFirstOctets }}.105
 
 redis:
