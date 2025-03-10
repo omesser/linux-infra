@@ -19,18 +19,6 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: report-pv
-  namespace: airflow
-spec:
-  storageClassName: openebs-zfspv
-  capacity:
-    storage: 300Gi
-  accessModes:
-    - ReadWriteOnce
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
   name: coordinates-pv
   namespace: airflow
 spec:
