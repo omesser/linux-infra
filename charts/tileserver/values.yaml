@@ -4,7 +4,7 @@ ingress:
   enabled: true
   ingressClassName: nginx
   tls: null
-  mapNames: ["satellite"]
+  paths: ["/data/satellite"]
 
 image:
   repository: maptiler/tileserver-gl

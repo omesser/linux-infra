@@ -26,3 +26,22 @@ releases:
     values:
       - airflow/values.yml.gotmpl
     
+  - name: map-server
+    namespace: airflow
+    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/tileserver       
+    timeout: 600
+    values:
+      - tileserver/values.yml.gotmpl
+  
+  - name: map-server
+    namespace: airflow
+    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/airflow       
+    timeout: 600
+    hooks:
+      - events: ["presync"]
+        showlogs: true
+        command: "kubectl"
+        args: ["-f", "apply", "control-center/extra-manifests.yml.gotmpl"] 
+    values:
+      - airflow/values.yml.gotmpl
+    

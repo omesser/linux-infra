@@ -13,8 +13,8 @@ spec:
   rules:
     - http:
         paths:
-        {{- range .Values.ingress.mapNames }}
-          - path: /styles/{{ . }}
+        {{- range .Values.ingress.paths }}
+          - path: {{ . }}
             pathType: ImplementationSpecific
             backend:
               service:
