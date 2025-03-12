@@ -1,10 +1,9 @@
-{{- $offlineDeploy := (env "OFFLINE_DEPLOY" | default "offline_deploy") -}}
-{{- $linuxUser := (env "LINUX_USER" | default "prisma") -}}
+{{- $artifactPath := (env "ARTIFACT_PATH" | default "prisma") -}}
 
 releases:
   - name: postgres-shaked
     namespace: postgres-shaked
-    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/postgresql
+    chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/postgresql
     timeout: 600      
     hooks:
       - events: ["postsync"]
@@ -16,7 +15,7 @@ releases:
       
   - name: airflow
     namespace: airflow
-    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/airflow       
+    chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/airflow       
     timeout: 600
     hooks:
       - events: ["presync"]
@@ -28,14 +27,14 @@ releases:
     
   - name: map-server
     namespace: airflow
-    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/tileserver       
+    chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/tileserver       
     timeout: 600
     values:
       - tileserver/values.yml.gotmpl
   
   - name: map-server
     namespace: airflow
-    chart: /home/{{ $linuxUser}}/{{ $offlineDeploy }}/helm_charts/downloaded_helm_charts/airflow       
+    chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/airflow       
     timeout: 600
     hooks:
       - events: ["presync"]

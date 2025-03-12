@@ -11,12 +11,10 @@ grafana:
     enabled: true
     type: LoadBalncer
     loadBalancerIP: {{ $threeFirstOctets }}.106
-  global:
-    registry: null  
   image:
-    registry: "localhost:5000"
-    repository: dashboards/grafana-shaked
-    tag: "v0.0.8-dev"
+    registry: "262399703539.dkr.ecr.eu-central-1.amazonaws.com"
+    repository: "dashboards/grafana-shaked"
+    tag: "v0.0.9-dev"
   grafana.ini:
     paths:
       plugins: /etc/grafana/plugins
