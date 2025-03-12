@@ -32,14 +32,14 @@ add_pvs() {
 }
 
 add_secrets() {
-    if kubectl get secret shaked-onprem-secret -n airflow >/dev/null 2>&1; then
-        log "Secret 'shaked-onprem-secret' already exists in namespace 'airflow'. Skipping creation."
+    if kubectl get secret shaked-onprem-secret -n airflow-control-center >/dev/null 2>&1; then
+        log "Secret 'shaked-onprem-secret' already exists in namespace 'airflow-control-center'. Skipping creation."
     else
         kubectl create secret generic shaked-onprem-secret \
             --from-literal=db_host="postgres-shaked-postgresql.postgres-shaked.svc.cluster.local" \
             --from-literal=db_username="postgres" \
             --from-literal=db_password="postrgres" \
-            -n airflow || error_exit "Failed to create secret 'shaked-onprem-secret' in namespace 'airflow'"
+            -n airflow-control-center || error_exit "Failed to create secret 'shaked-onprem-secret' in namespace 'airflow-control-center'"
         log "Secret 'shaked-onprem-secret' created successfully."
     fi
 }
