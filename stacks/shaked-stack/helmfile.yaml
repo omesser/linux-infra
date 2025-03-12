@@ -32,7 +32,7 @@ releases:
   
   - name: control-server
     namespace: airflow-control-center
-    chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/airflow       
+    chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/kube-prometheus-stack       
     timeout: 600
     values:
       - control-center/values.yml.gotmpl
