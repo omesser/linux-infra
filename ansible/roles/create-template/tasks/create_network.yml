@@ -1,18 +1,18 @@
 - name: Check if bridge {{ net_bridge.name }} exists on the host
   shell: >
-    pvesh get /nodes/{{ proxmox_node }}/network/{{ net_bridge.name }}
+    pvesh get /nodes/{{ machine_config.proxmox_node }}/network/{{ net_bridge.name }}
   register: bridge_check
   ignore_errors: yes
 
 - name: Create bridge {{ net_bridge.name }} using pvesh
   shell: >
-    pvesh create /nodes/{{ proxmox_node }}/network --iface {{ net_bridge.name }} --type bridge
-  when: bridge_check.rc != 0
+    pvesh create /nodes/{{ machine_config.proxmox_node }}/network --iface {{ net_bridge.name }} --type bridge
+  when: (bridge_check.rc | default(1)) != 0
 
 - name: Configure the bridge {{ net_bridge.name }} using pvesh
   shell: >
-    pvesh set /nodes/{{ proxmox_node }}/network/{{ net_bridge.name }} --type bridge --cidr {{ net_bridge.cidr }} --autostart
+    pvesh set /nodes/{{ machine_config.proxmox_node }}/network/{{ net_bridge.name }} --type bridge --cidr {{ net_bridge.cidr }} --autostart
 
 - name: Reloading the Proxmox networking {{ net_bridge.name }} using pvesh
   shell: >
-    pvesh set /nodes/{{ proxmox_node }}/network
+    pvesh set /nodes/{{ machine_config.proxmox_node }}/network
