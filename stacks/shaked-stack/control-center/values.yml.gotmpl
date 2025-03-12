@@ -9,7 +9,7 @@ grafana:
   defaultDashboardsEnabled: false 
   service:
     enabled: true
-    type: LoadBalncer
+    type: LoadBalancer
     loadBalancerIP: {{ $threeFirstOctets }}.106
   image:
     registry: "262399703539.dkr.ecr.eu-central-1.amazonaws.com"
