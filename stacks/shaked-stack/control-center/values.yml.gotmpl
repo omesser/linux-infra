@@ -41,7 +41,7 @@ prometheus:
   enabled: true
   service:
     enabled: true
-    type: LoadBalncer
+    type: LoadBalancer
     loadBalancerIP: {{ $threeFirstOctets }}.107 
   retention: 120d
   retentionSize: 9GB
