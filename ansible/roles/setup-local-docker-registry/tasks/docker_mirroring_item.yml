@@ -1,3 +1,15 @@
+- name: Determine if current image is already in the local registry
+  set_fact:
+    is_local_image: "{{ current_image.startswith(docker_registry_address) }}"
+
+- name: Untag image if it is already from local registry
+  community.docker.docker_image:
+    name: "{{ current_image.split(':')[0] }}"
+    tag: "{{ current_image.split(':')[1] }}"
+    state: absent
+    source: local
+  when: is_local_image
+  
 - name: Compute varibles for new image tag for local registry
   set_fact:
     original_image: "{{ current_image }}"
