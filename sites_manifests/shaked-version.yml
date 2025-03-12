@@ -6,7 +6,7 @@ artifact:
 
 helm_spec:
   project_name: shaked
-  three_first_octets: 10.10.70
+  three_first_octets: 10.20.10
   branch_name: ib/shaked-integration
 
   helm_repos:
@@ -40,7 +40,7 @@ helm_spec:
     apache-airflow/airflow: "1.15.0"
 
 docker_spec:
-  docker_registry_address: 10.10.70.150:5000
+  docker_registry_address: 10.20.10.150:5000
   docker_images:
     prisma_images:
       - "262399703539.dkr.ecr.eu-central-1.amazonaws.com/grafana-iec:on-prem2"

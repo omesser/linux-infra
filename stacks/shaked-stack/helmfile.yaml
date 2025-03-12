@@ -14,7 +14,7 @@ releases:
       - postgres/values.yml.gotmpl
       
   - name: airflow
-    namespace: airflow-control-center
+    namespace: airflow
     chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/airflow       
     timeout: 600
     hooks:
@@ -35,7 +35,7 @@ releases:
     timeout: 600
   
   - name: control-server
-    namespace: airflow-control-center
+    namespace: airflow
     chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/kube-prometheus-stack       
     timeout: 600
     values:
