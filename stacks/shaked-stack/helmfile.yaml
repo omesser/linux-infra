@@ -29,8 +29,6 @@ releases:
     namespace: map-server
     chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/tileserver-gl       
     timeout: 600
-    values:
-      - tileserver/values.yml.gotmpl
   
   - name: control-server
     namespace: airflow-control-center
