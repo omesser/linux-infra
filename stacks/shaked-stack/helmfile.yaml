@@ -27,7 +27,7 @@ releases:
     
   - name: map-server
     namespace: map-server
-    chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/tileserver       
+    chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/tileserver-gl       
     timeout: 600
     values:
       - tileserver/values.yml.gotmpl
