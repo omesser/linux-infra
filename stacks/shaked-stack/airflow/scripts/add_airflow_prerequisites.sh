@@ -23,8 +23,8 @@ create_folder_structure() {
 }
 
 copy_files() {
-    cp -r /home/prisma/"$OFFLINE_DEPLOY"/shaked/config/* /home/prisma/shaked/config/ || error_exit "Failed to copy contents from /home/prisma/$OFFLINE_DEPLOY/shaked/config to /home/prisma/shaked/config"
-    cp -r /home/prisma/"$OFFLINE_DEPLOY"/shaked/coordinates/* /home/prisma/shaked/coordinates/ || error_exit "Failed to copy contents from /home/prisma/$OFFLINE_DEPLOY/shaked/coordinates to /home/prisma/shaked/coordinates"
+    cp -r $ARTIFACT_PATH/shaked/config/* /home/prisma/shaked/config/ || error_exit "Failed to copy contents from $ARTIFACT_PATH/shaked/config/ to /home/prisma/shaked/config"
+    cp -r $ARTIFACT_PATH/shaked/coordinates/* /home/prisma/shaked/coordinates/ || error_exit "Failed to copy contents from $ARTIFACT_PATH/shaked/coordinates/ to /home/prisma/shaked/coordinates"
 }
 
 add_pvs() {
