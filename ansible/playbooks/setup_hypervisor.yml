@@ -23,41 +23,34 @@
         machine_config: "{{ hostvars[inventory_hostname].configuration }}"
         machine_name: "{{ inventory_hostname }}"
 
-    - name: Debug versions data
-      debug:
-        var: machine_config.net_bridge
+    - name: Set the template name
+      set_fact:
+        machine_template_name: "{{ machine_name }}-template"
 
-    - name: Debug versions dasdasdata
-      debug:
-        var: machine_name
+    # - name: Debug versions data
+    #   debug:
+    #     var: machine_config.net_bridge
 
+    # - name: Debug versions dasdasdata
+    #   debug:
+    #     var: machine_name
 
-# # add default vars
 
   roles:
     - role: create-template
       vars:
-        # template_vmid: 
         template_vmid: "{{ machine_config.template_vmid }}"
-        template_name: "{{ machine_name }}-template"
-        cloud_init_user: "prisma"
-        cloud_init_password: "prisma"
+        template_name: "{{ machine_template_name }}"
         net_bridge: "{{ machine_config.net_bridge }}"
-        scsihw: virtio-scsi-pci
-        memory: 2048
-        cores: 2
-        proxmox_storage: "local-lvm"
-        cloud_image: "/var/lib/vz/template/iso/noble-server-cloudimg-amd64.img"
 
-# # add download if needed
-
+    # add default vars
     - role: create-vms
       vars:
         proxmox_host_ip: "{{ machine_config.proxmox_host_ip }}"
         proxmox_user: "{{ machine_config.proxmox_user }}"
         proxmox_user_password: "{{ machine_config.proxmox_user_password }}"
         proxmox_node: "{{ machine_config.proxmox_node }}"
-        template_name: "{{ machine_name }}-template"
-        proxmox_storage: "local-lvm"
+        template_name: "{{ machine_template_name }}"
+        proxmox_storage: "local-lvm" # NEED TO BE CHANGED LATER!!!
         vms: "{{ configuration.vms }}"
 
