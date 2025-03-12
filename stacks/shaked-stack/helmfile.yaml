@@ -35,6 +35,6 @@ releases:
     chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/airflow       
     timeout: 600
     values:
-      - control-server/values.yml.gotmpl
-      - control-server/extra-manifests.yml.gotmpl
+      - control-center/values.yml.gotmpl
+      - control-center/extra-manifests.yml.gotmpl
     
