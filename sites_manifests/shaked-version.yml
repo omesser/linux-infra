@@ -6,7 +6,7 @@ artifact:
 
 helm_spec:
   project_name: shaked
-  threeFirstOctets: 10.10.70
+  three_first_octets: 10.10.70
   branch_name: ib/shaked-integration
 
   helm_repos:

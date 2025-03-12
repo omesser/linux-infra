@@ -14,7 +14,7 @@ releases:
       - postgres/values.yml.gotmpl
       
   - name: airflow
-    namespace: airflow
+    namespace: airflow-control-center
     chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/airflow       
     timeout: 600
     hooks:
@@ -26,21 +26,17 @@ releases:
       - airflow/values.yml.gotmpl
     
   - name: map-server
-    namespace: airflow
+    namespace: map-server
     chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/tileserver       
     timeout: 600
     values:
       - tileserver/values.yml.gotmpl
   
-  - name: map-server
-    namespace: airflow
+  - name: control-server
+    namespace: airflow-control-center
     chart: {{ $artifactPath }}/helm_charts/downloaded_helm_charts/airflow       
     timeout: 600
-    hooks:
-      - events: ["presync"]
-        showlogs: true
-        command: "kubectl"
-        args: ["-f", "apply", "control-center/extra-manifests.yml.gotmpl"] 
     values:
-      - airflow/values.yml.gotmpl
+      - control-server/values.yml.gotmpl
+      - control-server/extra-manifests.yml.gotmpl
     
