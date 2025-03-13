@@ -3,7 +3,6 @@
   shell: |
     qm unlock {{ template_vmid }} || true
     qm destroy {{ template_vmid }} || true
-  ignore_errors: true
 
 - name: Create the basic network for the vm template ( currently only bridge )
   include_tasks: create_network.yml

@@ -20,21 +20,12 @@
   pre_tasks:
     - name: Set machine configuration fact
       set_fact:
-        machine_config: "{{ hostvars[inventory_hostname].configuration }}"
         machine_name: "{{ inventory_hostname }}"
+        machine_config: "{{ machines[inventory_hostname] }}"
 
     - name: Set the template name
       set_fact:
         machine_template_name: "{{ machine_name }}-template"
-
-    # - name: Debug versions data
-    #   debug:
-    #     var: machine_config.net_bridge
-
-    # - name: Debug versions dasdasdata
-    #   debug:
-    #     var: machine_name
-
 
   roles:
     - role: create-template

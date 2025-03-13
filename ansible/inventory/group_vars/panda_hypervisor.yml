@@ -9,7 +9,6 @@
 # proxmox_node: "vm1"
 # installation_mode: offline  # or online
 
-# # vms configuration #
 # vms:
 #   workernode-panda:
 #     name: "worker-node-panda"
