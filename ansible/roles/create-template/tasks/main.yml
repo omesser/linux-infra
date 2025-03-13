@@ -1,0 +1,48 @@
+---
+- name: Remove any existing VM with template ID
+  shell: |
+    qm unlock {{ template_vmid }} || true
+    qm destroy {{ template_vmid }} || true
+
+- name: Create the basic network for the vm template ( currently only bridge )
+  include_tasks: create_network.yml
+
+- name: Create VM with cloud-init parameters for template
+  shell: |
+    qm create {{ template_vmid }} \
+      --name {{ template_name }} \
+      --ciuser {{ cloud_init_user }} \
+      --cipassword {{ cloud_init_password }} \
+      --net0 virtio,bridge={{ net_bridge.name }} \
+      --memory {{ memory }} \
+      --cores {{ cores }} \
+      --scsihw {{ scsihw }} \
+      --ipconfig0 ip=dhcp \
+      --ostype l26 \
+      --agent 1
+  args:
+    executable: /bin/bash
+
+- name: Import disk image into template VM
+  shell: >
+    qm importdisk {{ template_vmid }} {{ cloud_image }} {{ proxmox_storage }}
+  register: import_disk
+
+- name: Attach disk and add cloud-init drive to template VM
+  shell: |
+    qm set {{ template_vmid }} \
+      --scsi0 {{ proxmox_storage }}:vm-{{ template_vmid }}-disk-0 \
+      --boot order=scsi0 \
+      --ide2 {{ proxmox_storage }}:cloudinit
+  args:
+    executable: /bin/bash
+
+- name: Resize disk (if needed)
+  shell: >
+    qm resize {{ template_vmid }} scsi0 +20G
+  register: resize_disk
+
+- name: Convert VM to a template
+  shell: >
+    qm template {{ template_vmid }}
+  register: convert_template

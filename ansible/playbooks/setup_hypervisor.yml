@@ -1,22 +1,47 @@
 ---
+- name: Load machine configuration and add hosts dynamically
+  hosts: localhost
+  gather_facts: true
+  tasks:
+    - name: Add each machine from manifest to dynamic inventory
+      add_host:
+        name: "{{ item.key }}"
+        ansible_host: "{{ item.value.ansible_host }}"
+        ansible_user: "{{ item.value.ansible_user }}"
+        ansible_password: "{{ item.value.ansible_password }}"
+        configuration: "{{ item.value }}"
+      loop: "{{ machines | dict2items }}"
+
+
 - name: Offline Installation Playbook
-  hosts: all
+  hosts: "{{ machines.keys() }}"
   become: true
   gather_facts: true
-
   pre_tasks:
-    - name: Debug Proxmox API User
-      debug:
-        msg: "Proxmox API User is: {{ proxmox_host_ip }}"
+    - name: Set machine configuration fact
+      set_fact:
+        machine_name: "{{ inventory_hostname }}"
+        machine_config: "{{ machines[inventory_hostname] }}"
 
-        
+    - name: Set the template name
+      set_fact:
+        machine_template_name: "{{ machine_name }}-template"
+
   roles:
+    - role: create-template
+      vars:
+        template_vmid: "{{ machine_config.template_vmid }}"
+        template_name: "{{ machine_template_name }}"
+        net_bridge: "{{ machine_config.net_bridge }}"
+
+    # add default vars
     - role: create-vms
       vars:
-        proxmox_host_ip: "{{ merged_configurations.proxmox_host_ip }}"
-        proxmox_user: "{{ merged_configurations.proxmox_user }}"
-        proxmox_user_password: "{{ merged_configurations.proxmox_user_password }}"
-        proxmox_node: "{{ merged_configurations.proxmox_node }}"
-        vms: "{{ merged_configurations.vms }}"
-      tags: vm_creation
+        proxmox_host_ip: "{{ machine_config.proxmox_host_ip }}"
+        proxmox_user: "{{ machine_config.proxmox_user }}"
+        proxmox_user_password: "{{ machine_config.proxmox_user_password }}"
+        proxmox_node: "{{ machine_config.proxmox_node }}"
+        template_name: "{{ machine_template_name }}"
+        proxmox_storage: "local-lvm" # NEED TO BE CHANGED LATER!!!
+        vms: "{{ configuration.vms }}"
 

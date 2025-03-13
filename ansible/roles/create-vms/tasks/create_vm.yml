@@ -1,0 +1,70 @@
+- name: Extract VM name and parameters
+  set_fact:
+    vm_name: "{{ vm_item.key }}"
+    vm_params: "{{ vm_item.value }}"
+
+- name: Debug - Creating VM
+  debug:
+    msg: "Creating VM {{ vm_name }} with parameters: {{ vm_params }}"
+
+
+- name: Clone a new VM from the cloud-init template
+  community.general.proxmox_kvm:
+    api_host: "{{ proxmox_host_ip }}"
+    api_user: "{{ proxmox_user }}"
+    api_password: "{{ proxmox_user_password }}"
+    node: "{{ proxmox_node }}"
+    clone: "{{ template_name }}"
+    name: "{{ vm_params.name | default(vm_name) }}"
+    storage: "{{ proxmox_storage }}"
+    state: present
+  register: clone_vm
+
+# - name: Create VMs on Proxmox
+- name: Update Cloud-Init configuration on the new VM
+  community.general.proxmox_kvm:
+    api_host: "{{ proxmox_host_ip }}"
+    api_user: "{{ proxmox_user }}"
+    api_password: "{{ proxmox_user_password }}"
+    node: "{{ proxmox_node }}"
+    name: "{{ vm_params.name | default(vm_name) }}"
+    sshkeys: "{{ lookup('file', vm_params.ssh_key_file ) }}"  # Can be configurable but for now it like this
+    ciuser: "{{ vm_params.username }}"
+    cipassword: "{{ vm_params.password }}"
+    cores: "{{ vm_params.cores | default(2) }}"               # Can be configurable but for now it like this
+    memory: "{{ vm_params.memory | default(2048) }}"          # Can be configurable but for now it like this
+    scsi:
+      scsi0: "{{ vm_params.scsi | default('local-lvm:20') }}" # Can be configurable but for now it like this
+    ipconfig:
+      ipconfig0: "ip={{ vm_params.ip }}/24"                   # Adjust the netmask as necessary
+    state: present
+    update: True                                              # Must be here to apply the update
+  delegate_to: localhost
+
+- name: Debug - Finished creating the VM
+  debug:
+    msg: "Finished Creating VM {{ vm_name }}"
+
+- name: Start the created VMs on Proxmox
+  community.general.proxmox_kvm:
+    api_host: "{{ proxmox_host_ip }}"
+    api_user: "{{ proxmox_user }}"
+    api_password: "{{ proxmox_user_password }}"
+    node: "{{ proxmox_node }}"
+    name: "{{ vm_params.name }}"
+    state: started
+  delegate_to: localhost
+
+
+- name: Wait for SSH to become available on the new VM
+  wait_for:
+    host: "{{ vm_params.ip }}"
+    port: 22
+    delay: 10
+    timeout: 300
+
+- name: Add new VM to in-memory inventory
+  add_host:
+    name: "{{ vm_params.name | default(vm_name) }}"
+    ansible_host: "{{ vm_params.ip }}"
+    groups: new_vms
