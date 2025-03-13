@@ -2,3 +2,6 @@
 
 service:
   loadBalancerIP: {{ $threeFirstOctets }}.108
+
+ingress:
+  paths: ["/data/satellite", "/data/osm"]
