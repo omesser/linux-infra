@@ -17,7 +17,7 @@ service:
   loadBalancerIP: null
 persistence:
   enabled: true
-  capacity: 20Gi
+  capacity: 100Gi
   storageClassName: openebs-zfspv
 resources:
   requests:
@@ -29,4 +29,4 @@ resources:
 
 args:
   - "--config"
-  - "/data/tileserver.json"
+  - "/data/config.json"
