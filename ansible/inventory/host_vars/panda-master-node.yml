@@ -1,3 +1,5 @@
+enable_k3s_install: false
+enable_offline_apt_repo: true
 enable_apt_install: true
-enable_network_setup: true
+enable_network_setup: false
 enable_gpu_driver_install: false

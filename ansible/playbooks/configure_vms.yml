@@ -4,47 +4,67 @@
   become: true
   gather_facts: true
 
-  # 1) First, load the site’s versions.yml
-  pre_tasks:
-    - name: Debug gpu_driver_version
-      debug:
-        msg: "gpu_driver_version is: {{ gpu_driver_version }}"
-
-
   roles:
     - role: offline-apt-repo
       when: enable_offline_apt_repo | default(false)
+      tags: apt
+      vars:
+        offline_deploy_path: "{{ spec.configurations.offline_deploy_path }}"
 
     - role: apt-install
       when: enable_apt_install | default(false)
       vars:
-       apt_packages: "{{ merged_configurations.components.apt_packages | default([]) }}"
+       apt_packages: "{{ spec.components.apt_packages | default([]) }}"
+      tags: apt
 
-    - role: gpu-driver-install
-      when: enable_gpu_driver_install | default(false)
+    - role: drivers-install
+      when: enable_drivers_install | default(false)
       vars:
-       gpu_settings: "{{ versions_data.components.gpu_drivers | default([]) }}"
+       drivers: "{{ spec.components.drivers | default([]) }}"
+       offline_deploy_path: "{{ spec.configurations.offline_deploy_path }}"
+      tags: install-drivers
+
+    - role: k3s-install
+      when: enable_k3s_install | default(false)
+      vars:
+        master_node_ip: "{{ spec.configurations.master_node_ip }}"
+        k3s_tools: "{{ spec.components.k3s_tools }}"
+        offline_deploy_path: "{{ spec.configurations.offline_deploy_path }}"
+
+    - role: k8s-tools-install
+      when: enable_k8s_tools_install | default(false)
+      vars:
+        k8s_tools: "{{ spec.components.k8s_tools }}"
+        offline_deploy_path: "{{ spec.configurations.offline_deploy_path }}"
+
+    - role: helm-install
+      when: enable_helm_install | default(false)
 
     - role: gpu-driver-uninstall
       when: enable_gpu_driver_uninstall | default(false)
+      tags: uninstall-gpu
+
+
+    - role: configure-registry-mirroring
+      when: enable_configure_registry_mirroring | default(false)
       vars:
-       gpu_settings: "{{ versions_data.components.gpu_drivers | default([]) }}"
+       docker_registry_address: "{{ docker_spec.docker_registry_address }}"
 
-#    - role: network-setup
-#      when: enable_network_setup | default(false)
+    - role: setup-local-docker-registry
+      when: enable_setup_local_docker_registry | default(false)
+      vars:
+        docker_images: "{{ docker_spec.docker_images }}"
+        docker_registry_address: "{{ docker_spec.docker_registry_address }}"
+        artifact_path: "{{ artifact.artifact_path }}"
 
-#    - role: local-registry
-#      when: enable_network_setup | default(false)
-
-    # 4) Docker load if enabled (pass docker_images from versions_data)
-#    - role: docker-load
-#      when: enable_docker_load | default(false)
-#      vars:
-#       docker_images: "{{ merged_configurations.components.docker_images | default([]) }}"
-
-#    # 5) Helm install if enabled (pass helm_charts from versions_data)
-#    - role: helm-install
-#      when: enable_helm_install | default(false)
-#      vars:
-#       helm_charts: "{{ versions_data.helm_charts | default([]) }}"
+    - role: helm-install
+      when: enable_helm_install | default(false)
+      vars: 
+        linux_user_name: "{{ linux_user.linux_user_name }}"
+        artifact_path: "{{ artifact.artifact_path }}"
+        helm_charts: "{{ helm_spec.helm_charts }}"
+        project_name: "{{ helm_spec.project_name }}"
+        helm_repos: "{{ helm_spec.helm_repos }}"
+        three_first_octets: "{{ helm_spec.three_first_octets }}"
+        branch_name: "{{ helm_spec.branch_name  }}"
 
