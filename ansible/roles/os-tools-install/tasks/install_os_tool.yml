@@ -1,0 +1,39 @@
+
+
+---
+- name: Set tool filename for {{ item.name }}
+  set_fact:
+    tool_filename: "{{ item.url | basename }}"
+
+- name: Check if {{ tool_filename }} exists on local deploy directory
+  stat:
+    path: "{{ artifact_path }}/os-utils/{{ tool_filename }}"
+  register: local_tool_file
+
+- name: Download {{ tool_filename }} if not exists
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ artifact_path }}/os-utils/{{ tool_filename }}"
+    mode: '0755'
+    validate_certs: no
+  when: not local_tool_file.stat.exists
+
+- name: Install {{ item.name }} from archive file
+  block:
+    - name: Unarchive {{ tool_filename }}
+      unarchive:
+        src: "{{ artifact_path }}/os-utils/{{ tool_filename }}"
+        dest: "{{ artifact_path }}/os-utils/"
+        remote_src: yes
+
+    - name: Find extracted binary for {{ item.bin_file }}
+      find:
+        paths:  "{{ artifact_path }}/os-utils"
+        recurse: yes
+        file_type: file
+        patterns: "{{ item.bin_file }}"
+      register: found_bin
+
+    - name: Run binary for {{ item.name }}
+      command: "{{ found_bin.files[0].path }} {{ item.flags }}"
+      when: found_bin.matched > 0
