@@ -38,14 +38,6 @@
         k3s_tools: "{{ spec.components.k3s_tools }}"
         artifact_path: "{{ spec.configurations.artifact_path }}"
 
-    - role: helm-install
-      when: enable_helm_install | default(false)
-
-    - role: gpu-driver-uninstall
-      when: enable_gpu_driver_uninstall | default(false)
-      tags: uninstall-gpu
-
-
     - role: configure-registry-mirroring
       when: enable_configure_registry_mirroring | default(false)
       vars:
