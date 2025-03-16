@@ -30,6 +30,8 @@ env:
     value: dev
   - name: AIRFLOW__WEBSERVER__BASE_URL
     value: http://data_dev.internal:8080
+  - name: MAP_SERVER
+    value: http://172.31.7.72:28386/data/satellite-mediumres-2021/
 
 secret:
   - envName: DB_HOST
