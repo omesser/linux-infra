@@ -1,23 +1,21 @@
 BASE_PACKAGES=(
     autofs
+    build-essential
     containerd.io
     curl
     docker-ce
     dos2unix
     dpkg-dev
     gcc
+    gcc-9
     gdb
     git
-    google-chrome-stable
     jq
-    kubectl
-    libvirt-daemon-system
     make
     net-tools
     nfs-common
     nfs-kernel-server
     psutils
-    qemu-kvm
     rar
     samba
     samba-common
@@ -25,8 +23,6 @@ BASE_PACKAGES=(
     sshpass
     traceroute
     unzip
-    virt-manager
-    virtinst
     zfs-zed
     zfsutils-linux
     zip
