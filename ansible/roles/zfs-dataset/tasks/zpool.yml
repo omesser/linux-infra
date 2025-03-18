@@ -1,0 +1,6 @@
+---
+- name: Create ZFS pools from configuration
+  command: "zpool create {{ item.zpool_name }} {{ item.zpool_device }}"
+  args:
+    creates: "/{{ item.zpool_name }}"
+  loop: "{{ zfs_configuration.zpools }}"
