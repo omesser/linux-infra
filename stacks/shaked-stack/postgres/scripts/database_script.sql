@@ -510,8 +510,7 @@ create table prisma_projects.control_center_config
 alter table prisma_projects.control_center_config
     owner to postgres;
 
-create index control_center_config_env_name
-    on prisma_projects.control_center_config (env_name);
+
 
 
 DO $$
@@ -767,3 +766,4 @@ CREATE INDEX if not exists shaked_o_site_fk ON operational_results.shaked_o_puls
 CREATE INDEX if not exists mongo_config_site_id_fk ON prisma_projects.data_collection_mongo_params USING btree (site);
 CREATE INDEX if not exists siteid ON prisma_projects.sites USING btree (siteid);
 CREATE INDEX if not exists sites_name_index ON prisma_projects.sites USING btree (name);
+create index if not exists control_center_config_env_name on prisma_projects.control_center_config (env_name);
