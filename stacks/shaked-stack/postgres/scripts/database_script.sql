@@ -495,7 +495,7 @@ create table operational_results.shaked_reports
 );
 
 alter table operational_results.shaked_reports
-    owner to shaked;
+    owner to postgres;
 
 create unique index idx_shaked_reports_unique
     on operational_results.shaked_reports (report_date, report_site);
@@ -508,7 +508,7 @@ create table prisma_projects.control_center_config
 );
 
 alter table prisma_projects.control_center_config
-    owner to shaked;
+    owner to postgres;
 
 create index control_center_config_env_name
     on prisma_projects.control_center_config (env_name);
