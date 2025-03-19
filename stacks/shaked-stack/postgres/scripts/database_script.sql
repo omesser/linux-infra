@@ -491,7 +491,9 @@ create table operational_results.shaked_reports
     report_date      date,
     report_site      varchar(64),
     report_location  varchar(1000),
-    report_file_name varchar(100)
+    report_file_name varchar(100),
+    report_volume    varchar(300),
+    report_path      varchar(300)
 );
 
 alter table operational_results.shaked_reports
