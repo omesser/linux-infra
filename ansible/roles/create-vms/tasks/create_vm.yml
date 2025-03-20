@@ -1,3 +1,6 @@
+# READ THIS PLEASE!
+# https://galaxy.ansible.com/ui/repo/published/community/general/content/module/proxmox_kvm/
+
 - name: Extract VM name and parameters
   set_fact:
     vm_name: "{{ vm_item.key }}"
@@ -20,6 +23,7 @@
     state: present
   register: clone_vm
 
+
 # - name: Create VMs on Proxmox
 - name: Update Cloud-Init configuration on the new VM
   community.general.proxmox_kvm:
@@ -38,8 +42,13 @@
     ipconfig:
       ipconfig0: "ip={{ vm_params.ip }}/24"                   # Adjust the netmask as necessary
     state: present
-    update: True                                              # Must be here to apply the update
+    update: True                               # Must be here to apply the update
+    update_unsafe: True                        # Must be here to apply the update
   delegate_to: localhost
+
+- name: Setup network with DHCP (if enabled in the configuration)
+  include_tasks: setup_dhcp.yml
+  when: vm_params.dhcp | default(false)
 
 - name: Debug - Finished creating the VM
   debug:

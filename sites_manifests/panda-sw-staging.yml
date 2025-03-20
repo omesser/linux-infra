@@ -38,6 +38,7 @@ machines:
         type: workernode
         gpu: true
         ssh_key_file: "/root/.ssh/id_rsa.pub"
+        dhcp: true  # NEEDS TO BE ADDED AND CONFIGURABLE BUT FOR NOW THIS IS WHAT IT IS
         # spec:
         #   components:
         #     apt_packages:
