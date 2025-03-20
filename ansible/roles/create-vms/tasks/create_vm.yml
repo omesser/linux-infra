@@ -35,6 +35,7 @@
     sshkeys: "{{ lookup('file', vm_params.ssh_key_file ) }}"  # Can be configurable but for now it like this
     ciuser: "{{ vm_params.username }}"
     cipassword: "{{ vm_params.password }}"
+    cpu: "host"
     cores: "{{ vm_params.cores | default(default_cores) }}"
     sockets: "{{ vm_params.sockets | default(default_sockets) }}"      
     memory: "{{ vm_params.memory | default(default_memory) }}"
