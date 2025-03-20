@@ -1,1 +1,4 @@
+default_memory: 2048
+default_cores: 10
+default_sockets: 2
 network_adapter: "vmbr0"

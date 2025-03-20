@@ -35,10 +35,9 @@
     sshkeys: "{{ lookup('file', vm_params.ssh_key_file ) }}"  # Can be configurable but for now it like this
     ciuser: "{{ vm_params.username }}"
     cipassword: "{{ vm_params.password }}"
-    cores: "{{ vm_params.cores | default(2) }}"               # Can be configurable but for now it like this
-    memory: "{{ vm_params.memory | default(2048) }}"          # Can be configurable but for now it like this
-    scsi:
-      scsi0: "{{ vm_params.scsi | default('local-lvm:20') }}" # Can be configurable but for now it like this
+    cores: "{{ vm_params.cores | default(default_cores) }}"
+    sockets: "{{ vm_params.sockets | default(default_sockets) }}"      
+    memory: "{{ vm_params.memory | default(default_memory) }}"
     ipconfig:
       ipconfig0: "ip={{ vm_params.ip }}/24"                   # Adjust the netmask as necessary
     state: present
