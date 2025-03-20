@@ -40,6 +40,11 @@
     memory: "{{ vm_params.memory | default(default_memory) }}"
     ipconfig:
       ipconfig0: "ip={{ vm_params.ip }}/24"                   # Adjust the netmask as necessary
+    scsi:
+      scsi1: "{{ vm_params.scsi | default('local-lvm:20') }}" # Can be configurable but for now it like this
+
+    args: "-virtfs local,path={{ vm_params.mounts.src }},mount_tag={{ vm_params.mounts.tag }},security_model=none"  # Currently added just one mount path we need a better understanding how to handle it better
+
     state: present
     update: True                               # Must be here to apply the update
     update_unsafe: True                        # Must be here to apply the update
@@ -75,4 +80,9 @@
   add_host:
     name: "{{ vm_params.name | default(vm_name) }}"
     ansible_host: "{{ vm_params.ip }}"
+    ansible_user: "{{ vm_params.username }}"
+    ansible_password: "{{ vm_params.password }}"
     groups: new_vms
+
+- name: Sets up the mounting
+  include_tasks: mount.yml

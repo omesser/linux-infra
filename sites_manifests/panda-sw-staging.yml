@@ -40,6 +40,10 @@ machines:
         sockets: 2
         cores: 20
         memory: 4096
+        mounts:
+          src: "/mnt/data-to-share"
+          dest: "/mnt/idan-is-loser"
+          tag: "idan-share"
 
         gpu: true
 
