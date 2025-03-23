@@ -35,12 +35,20 @@ machines:
         username: "prisma"
         password: "prisma"
         ssh_key_file: "/root/.ssh/id_rsa.pub"
-        ip: "40.0.0.2"
-        dhcp: true  # NEEDS TO BE ADDED AND CONFIGURABLE BUT FOR NOW THIS IS WHAT IT IS
         sockets: 2
         cores: 20
         memory: 4096
         gpu: true
+
+        accessable_ip: "40.0.0.2" # The IP used to connect to the VM, later it will be taken from the ipconfig part
+        ipconfig:
+          ipconfig0: "ip=40.0.0.2/24"
+          ipconfig1: "ip=dhcp"
+
+        net:
+          net0: "virtio,bridge=vmbrStaging"
+          net1: "virtio,bridge=vmbr0"
+
         mounts:
           src: "/mnt/data-to-share"
           dest: "/mnt/idan-is-loser"

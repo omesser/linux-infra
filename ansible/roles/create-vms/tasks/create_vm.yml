@@ -39,8 +39,10 @@
     cores: "{{ vm_params.cores | default(default_cores) }}"
     sockets: "{{ vm_params.sockets | default(default_sockets) }}"      
     memory: "{{ vm_params.memory | default(default_memory) }}"
-    ipconfig:
-      ipconfig0: "ip={{ vm_params.ip }}/24"                   # Adjust the netmask as necessary
+    
+    ipconfig: "{{ vm_params.ipconfig }}"
+    net: "{{ vm_params.net }}"
+
     scsi:
       scsi1: "{{ vm_params.scsi | default('local-lvm:20') }}" # Can be configurable but for now it like this
 
@@ -50,10 +52,6 @@
     update: True                               # Must be here to apply the update
     update_unsafe: True                        # Must be here to apply the update
   delegate_to: localhost
-
-- name: Setup network with DHCP (if enabled in the configuration)
-  include_tasks: setup_dhcp.yml
-  when: vm_params.dhcp | default(false)
 
 - name: Debug - Finished creating the VM
   debug:
@@ -72,7 +70,7 @@
 
 - name: Wait for SSH to become available on the new VM
   wait_for:
-    host: "{{ vm_params.ip }}"
+    host: "{{ vm_params.accessable_ip }}"
     port: 22
     delay: 10
     timeout: 300
@@ -80,7 +78,7 @@
 - name: Add new VM to in-memory inventory
   add_host:
     name: "{{ vm_params.name | default(vm_name) }}"
-    ansible_host: "{{ vm_params.ip }}"
+    ansible_host: "{{ vm_params.accessable_ip }}"
     ansible_user: "{{ vm_params.username }}"
     ansible_password: "{{ vm_params.password }}"
     groups: new_vms
