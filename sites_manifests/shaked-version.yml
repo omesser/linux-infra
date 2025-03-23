@@ -213,8 +213,8 @@ machines:
 
     proxmox_host_ip: "10.50.0.144"
     proxmox_user: "root@pam"
-    proxmox_user_password: "Pa$$w0rd!"
-    proxmox_node: "vm1"
+    proxmox_user_password: "PASSW0RD"
+    proxmox_node: "shakedprod"
 
     template_vmid: 9000
 
