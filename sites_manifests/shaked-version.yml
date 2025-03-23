@@ -79,7 +79,7 @@ spec:
     
     helm_spec:
       project_name: shaked
-      three_first_octets: 10.10.70
+      three_first_octets: 10.20.20
       branch_name: main
       data_transfer:
         - pvc_name: config-volume-airflow-worker-0
