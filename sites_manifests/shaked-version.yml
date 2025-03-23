@@ -253,6 +253,8 @@ machines:
           net0: "virtio,bridge=vmbrStaging"
           net1: "virtio,bridge=vmbr0"
 
+        scsi: "data-lvm:15500"
+
         mounts:
           src: "/mnt/shaked"
           dest: "/mnt/shaked"
@@ -289,6 +291,8 @@ machines:
         net:
           net0: "virtio,bridge=vmbrStaging"
           net1: "virtio,bridge=vmbr0"
+
+        scsi: "data-lvm:300"
 
         mounts:
           src: "/mnt/shaked"
