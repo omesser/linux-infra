@@ -235,14 +235,14 @@ machines:
         cores: 28
         memory: 57344
         zfs_configuration:
-        zpools:
-          - zpool_name: prismapool
-            zpool_device: /dev/sda2
+          zpools:
+            - zpool_name: prismapool
+              zpool_device: /dev/sda2
 
-        data_sets:
-          - name: prismapool/root/k8storage
-            mountpoint: /var/lib/rancher/k3s/storage
-            quota: 15T
+          data_sets:
+            - name: prismapool/root/k8storage
+              mountpoint: /var/lib/rancher/k3s/storage
+              quota: 15T
 
         accessable_ip: "10.20.20.150" # The IP used to connect to the VM, later it will be taken from the ipconfig part
         ipconfig:
