@@ -209,7 +209,7 @@ machines:
     # Connectivity to the bare-metal (proxmox host)
     ansible_host: "10.50.0.144"
     ansible_user: "root"
-    ansible_password: "Pa$$w0rd!"
+    ansible_password: "PASSW0RD"
 
     proxmox_host_ip: "10.50.0.144"
     proxmox_user: "root@pam"
