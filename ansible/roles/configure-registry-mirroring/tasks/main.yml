@@ -7,7 +7,7 @@
     mode: '0755'
   become: yes
   
-- name: Configure registry mirrors for k3s worker
+- name: Configure registry mirrors for k3s
   template:
     src: registries.yaml.j2
     dest: /etc/rancher/k3s/registries.yaml
@@ -16,9 +16,9 @@
     mode: '0644'
   become: yes
 
-- name: Restart k3s worker
+- name: Restart k3s service
   systemd:
-    name: k3s-agent
+    name: "{{ 'k3s-agent' if k3s_mode == 'agent' else 'k3s' }}"
     state: restarted
     enabled: yes
   become: yes

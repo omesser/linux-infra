@@ -1,0 +1,7 @@
+# roles/create_zfs_dataset/tasks/main.yml
+
+- name: Create the ZFS pool
+  include_tasks: zpool.yml
+
+- name: Create ZFS datasets
+  include_tasks: dataset.yml

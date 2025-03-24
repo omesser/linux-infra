@@ -1,0 +1,31 @@
+- name: Ensure parent dataset(s) exist
+  command: "zfs create {{ item }}"
+  args:
+    creates: "/{{ item }}"
+  loop: "{{ zfs_configuration.data_sets | map(attribute='name') | map('regex_replace', '/[^/]+$', '') | unique | list }}"
+  when: item != ""
+  # This task extracts the parent dataset from each dataset name (e.g. for prismapool/root/docker it extracts prismapool/root)
+  # and creates it if it does not exist.
+
+- name: Check if ZFS dataset exists
+  command: "zfs list -H {{ dataset.name }}"
+  register: zfs_dataset_check
+  ignore_errors: yes
+  loop: "{{ zfs_configuration.data_sets }}"
+  loop_control:
+    loop_var: dataset
+    index_var: ds_index
+
+- name: Create ZFS dataset(s) if they do not exist
+  command: "zfs create -o mountpoint={{ dataset.mountpoint }} {{ dataset.name }}"
+  when: zfs_dataset_check.results[ds_index].rc != 0
+  loop: "{{ zfs_configuration.data_sets }}"
+  loop_control:
+    loop_var: dataset
+    index_var: ds_index
+
+- name: Set quota for ZFS dataset(s)
+  command: "zfs set quota={{ dataset.quota }} {{ dataset.name }}"
+  loop: "{{ zfs_configuration.data_sets }}"
+  loop_control:
+    loop_var: dataset
