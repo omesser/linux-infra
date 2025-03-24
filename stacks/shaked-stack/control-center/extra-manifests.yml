@@ -32,6 +32,8 @@ extraManifests:
                   value: "shaked@2025"
                 - name: DB_NAME
                   value: "postgres"
+                - name: SCHEMA_NAME
+                  value: "applications_group"
                 - name: PORT
                   value: "3001"
               volumeMounts:
