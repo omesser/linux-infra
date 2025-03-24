@@ -25,21 +25,21 @@
 
 - name: Import disk image into template VM
   shell: >
-    qm importdisk {{ template_vmid }} {{ cloud_image }} {{ proxmox_storage }}
+    qm importdisk {{ template_vmid }} {{ cloud_image }} {{ template_root_storage }}
   register: import_disk
 
 - name: Attach disk and add cloud-init drive to template VM
   shell: |
     qm set {{ template_vmid }} \
-      --scsi0 {{ proxmox_storage }}:vm-{{ template_vmid }}-disk-0 \
+      --scsi0 {{ template_root_storage }}:vm-{{ template_vmid }}-disk-0 \
       --boot order=scsi0 \
-      --ide2 {{ proxmox_storage }}:cloudinit
+      --ide2 {{ template_root_storage }}:cloudinit
   args:
     executable: /bin/bash
 
 - name: Resize disk (if needed)
   shell: >
-    qm resize {{ template_vmid }} scsi0 +200G
+    qm resize {{ template_vmid }} scsi0 +20G
   register: resize_disk
 
 - name: Convert VM to a template

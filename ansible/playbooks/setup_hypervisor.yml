@@ -33,6 +33,7 @@
         template_vmid: "{{ machine_config.template_vmid }}"
         template_name: "{{ machine_template_name }}"
         net_bridge: "{{ machine_config.net_bridge }}"
+        template_root_storage: "local-lvm"
 
     # add default vars
     - role: create-vms
@@ -42,6 +43,6 @@
         proxmox_user_password: "{{ machine_config.proxmox_user_password }}"
         proxmox_node: "{{ machine_config.proxmox_node }}"
         template_name: "{{ machine_template_name }}"
-        proxmox_storage: "local-lvm" # NEED TO BE CHANGED LATER!!!
+        proxmox_storage: "local-lvm"  # NEED TO BE CHANGED LATER!!!
         vms: "{{ configuration.vms }}"
 

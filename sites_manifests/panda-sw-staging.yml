@@ -48,9 +48,13 @@ machines:
         net:
           net0: "virtio,bridge=vmbrStaging"
           net1: "virtio,bridge=vmbr0"
+        
+        scsi:
+          # DONT PUT scsi0 cause it is the drive for the boot!
+          scsi1: "local-lvm:20"
 
         mounts:
-          src: "/mnt/data-to-share"
-          dest: "/mnt/idan-is-loser"
+          src: "/mnt/data-to-share1"
+          dest: "/mnt/idan-is-loser1"
           tag: "idan-share"
 
