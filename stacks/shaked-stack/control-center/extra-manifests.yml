@@ -1,4 +1,3 @@
-{{- $threeFirstOctets := (env "THREE_FIRST_OCTETS" | default "10.10.10") -}}
 extraManifests:
 
 ###### NODE-SERVER DEPLOYMENT ######
@@ -21,7 +20,7 @@ extraManifests:
         spec:
           containers:
             - name: node-server
-              image: 262399703539.dkr.ecr.eu-central-1.amazonaws.com/dashboards/grafana-shaked:node-test05
+              image: 262399703539.dkr.ecr.eu-central-1.amazonaws.com/shaked-node-server:dev-node06
               ports:
                 - containerPort: 3001
               env:
@@ -50,15 +49,31 @@ extraManifests:
       name: node-server
       namespace: control-center
     spec:
-      type: LoadBalancer
-      loadBalancerIP: {{ $threeFirstOctets }}.109
+      type: ClusterIP
       ports:
         - port: 3001          # Service port
           targetPort: 3001  # Container's listening port
       selector:
         app: node-server 
 
-
+###### NODE-SERVER INGRESS ######
+  - apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: node-server
+      namespace: control-center
+    spec:
+      ingressClassName: "nginx"
+      rules:
+        - http:
+            paths:
+              - path: /node-api
+                pathType: ImplementationSpecific
+                backend:
+                  service:
+                    name: node-server
+                    port:
+                      number: 3001
 ###### GRAFANA DATASOURCES ######
   - apiVersion: v1
     kind: Secret
