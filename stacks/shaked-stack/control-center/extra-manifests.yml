@@ -1,4 +1,3 @@
-{{- $threeFirstOctets := (env "THREE_FIRST_OCTETS" | default "10.10.10") -}}
 extraManifests:
 
 ###### NODE-SERVER DEPLOYMENT ######
@@ -6,7 +5,7 @@ extraManifests:
     kind: Deployment
     metadata:
       name: node-server
-      namespace: airflow
+      namespace: control-center
       labels:
         app: node-server
     spec:
@@ -21,12 +20,26 @@ extraManifests:
         spec:
           containers:
             - name: node-server
-              image: 262399703539.dkr.ecr.eu-central-1.amazonaws.com/dashboards/grafana-shaked:nodejs-dev01
+
+              image: 262399703539.dkr.ecr.eu-central-1.amazonaws.com/shaked-node-server:dev-node06
               ports:
-                - containerPort: 3002
+                - containerPort: 3001
+              env:
+                - name: DB_HOST
+                  value: "postgres-shaked-postgresql.postgres-shaked.svc.cluster.local"
+                - name: DB_USER
+                  value: "postgres"
+                - name: DB_PASSWORD
+                  value: "postgres"
+                - name: DB_NAME
+                  value: "postgres"
+                - name: SCHEMA_NAME
+                  value: "applications_group"
+                - name: PORT
+                  value: "3001"
               volumeMounts:
                 - name: reports-storage
-                  mountPath: /data
+                  mountPath: /app/report
           volumes:
             - name: reports-storage
               persistentVolumeClaim:
@@ -37,18 +50,34 @@ extraManifests:
     kind: Service
     metadata:
       name: node-server
-      namespace: airflow
+      namespace: control-center
     spec:
-      type: LoadBalancer
-      loadBalancerIP: {{ $threeFirstOctets }}.109
+      type: ClusterIP
       ports:
-        - port: 81          # Service port
-          targetPort: 3002  # Container's listening port
+        - port: 3001          # Service port
+          targetPort: 3001  # Container's listening port
       selector:
         app: node-server 
 
-
-###### DATASOURCES ######
+###### NODE-SERVER INGRESS ######
+  - apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: node-server
+      namespace: control-center
+    spec:
+      ingressClassName: "nginx"
+      rules:
+        - http:
+            paths:
+              - path: /node-api
+                pathType: ImplementationSpecific
+                backend:
+                  service:
+                    name: node-server
+                    port:
+                      number: 3001
+###### GRAFANA DATASOURCES ######
   - apiVersion: v1
     kind: Secret
     metadata:
@@ -79,15 +108,13 @@ extraManifests:
             # <bool> allow users to edit datasources from the UI.
             editable: true
 
-###### PROMETHEUS PERSISTENT STORAGE PV\PVC ######
-
-#### GRAFANA PVC
+#### GRAFANA PVC ######
 
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
       name: shaked-control-center-grafana-pvc
-      namespace: airflow
+      namespace: control-center
     spec:
       accessModes:
         - ReadWriteOnce
@@ -95,13 +122,14 @@ extraManifests:
         requests:
           storage: 5Gi
       storageClassName: openebs-zfspv
+
 ###### DASHBOARDS ######
 
   - apiVersion: v1
     kind: ConfigMap
     metadata:
       name: shaked-analysis
-      namespace: airflow
+      namespace: control-center
       labels:
         grafana-shaked-dashboard: "1"
     data:
@@ -185,7 +213,7 @@ extraManifests:
     kind: ConfigMap
     metadata:
       name: shaked-maps-pulse-alert
-      namespace: airflow
+      namespace: control-center
       labels:
         grafana-shaked-dashboard: "1"
     data:
@@ -270,7 +298,7 @@ extraManifests:
     kind: ConfigMap
     metadata:
       name: shaked-control-center
-      namespace: airflow
+      namespace: control-center
       labels:
         grafana-shaked-dashboard: "1"
     data:
@@ -354,7 +382,7 @@ extraManifests:
     kind: ConfigMap
     metadata:
       name: shaked-weekly-report
-      namespace: airflow
+      namespace: control-center
       labels:
         grafana-shaked-dashboard: "1"
     data:
