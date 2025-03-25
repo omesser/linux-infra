@@ -20,7 +20,6 @@ extraManifests:
         spec:
           containers:
             - name: node-server
-
               image: 262399703539.dkr.ecr.eu-central-1.amazonaws.com/shaked-node-server:dev-node06
               ports:
                 - containerPort: 3001
