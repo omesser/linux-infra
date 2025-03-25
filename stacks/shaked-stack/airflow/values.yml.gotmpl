@@ -3,7 +3,7 @@
 images:
   airflow:
     repository: 262399703539.dkr.ecr.eu-central-1.amazonaws.com/shaked-airflow
-    tag: 1.1.0
+    tag: 1.1.1
 
 env:
   - name: AIRFLOW__CORE__PARALLELISM
@@ -31,7 +31,7 @@ env:
   - name: AIRFLOW__WEBSERVER__BASE_URL
     value: http://data_dev.internal:8080
   - name: MAP_SERVER_URL
-    value: http://10.20.20.108:80/data/satellite/
+    value: http://{{ $threeFirstOctets }}.108:80/data/satellite/
 
 secret:
   - envName: DB_HOST
