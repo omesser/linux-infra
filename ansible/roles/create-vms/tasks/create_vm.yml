@@ -43,19 +43,37 @@
     ipconfig: "{{ vm_params.ipconfig }}"
     net: "{{ vm_params.net }}"
 
-    scsi:
-      scsi1: "{{ vm_params.scsi | default('local-lvm:20') }}" # Can be configurable but for now it like this
+    scsi: "{{ vm_params.scsi }}"
 
     args: "-virtfs local,path={{ vm_params.mounts.src }},mount_tag={{ vm_params.mounts.tag }},security_model=none"  # Currently added just one mount path we need a better understanding how to handle it better
 
     state: present
     update: True                               # Must be here to apply the update
     update_unsafe: True                        # Must be here to apply the update
-  delegate_to: localhost
+
+
+# https://galaxy.ansible.com/ui/repo/published/community/general/content/module/proxmox_disk/
+- name: Resize the root storage if needed
+  community.general.proxmox_disk:
+    api_host: "{{ proxmox_host_ip }}"
+    api_user: "{{ proxmox_user }}"
+    api_password: "{{ proxmox_user_password }}"
+    name: "{{ vm_params.name | default(vm_name) }}"
+    disk: scsi0
+    size: "+{{ vm_params.extend_root_size }}"
+    state: resized
 
 - name: Debug - Finished creating the VM
   debug:
     msg: "Finished Creating VM {{ vm_name }}"
+
+# HERE ONLY FOR THE MOUNTING SO IF YOU DONT WANT JUST REMOVE
+- name: Ensure mount point directory exists
+  file:
+    path: "{{ vm_params.mounts.src }}"      # Local directory where the share will be mounted
+    state: directory
+    mode: '0777'
+############################################################
 
 - name: Start the created VMs on Proxmox
   community.general.proxmox_kvm:
@@ -65,7 +83,6 @@
     node: "{{ proxmox_node }}"
     name: "{{ vm_params.name }}"
     state: started
-  delegate_to: localhost
 
 
 - name: Wait for SSH to become available on the new VM
@@ -83,5 +100,8 @@
     ansible_password: "{{ vm_params.password }}"
     groups: new_vms
 
+    
+# HERE ONLY FOR THE MOUNTING SO IF YOU DONT WANT JUST REMOVE
 - name: Sets up the mounting
   include_tasks: mount.yml
+############################################################

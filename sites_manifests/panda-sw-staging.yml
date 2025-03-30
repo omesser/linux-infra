@@ -20,13 +20,22 @@ machines:
     proxmox_user_password: "Pa$$w0rd!"
     proxmox_node: "vm1"
 
-    template_vmid: 9000
-    
+    # network configuration
     net_bridge:
       name: "vmbrStaging"
       netmask: "255.255.255.0"
       cidr: "40.0.0.1/24"
 
+    # template config
+    template:
+      vmid: 9000
+      root_storage: "local-lvm"
+      cloud_image: "/var/lib/vz/template/iso/noble-server-cloudimg-amd64.img"
+      net:
+        net0: "virtio,bridge=vmbrStaging" 
+      ipconfig:
+        ipconfig0: "ip=dhcp"
+    
     # vms configuration #
     vms:
       yuval-test-staging:
@@ -38,6 +47,7 @@ machines:
         sockets: 2
         cores: 20
         memory: 4096
+        extend_root_size: 10G
         gpu: true
 
         accessable_ip: "40.0.0.2" # The IP used to connect to the VM, later it will be taken from the ipconfig part
@@ -48,9 +58,13 @@ machines:
         net:
           net0: "virtio,bridge=vmbrStaging"
           net1: "virtio,bridge=vmbr0"
+        
+        scsi:
+          # DONT PUT scsi0 cause it is the drive for the boot!
+          scsi1: "local-lvm:20"
 
         mounts:
-          src: "/mnt/data-to-share"
-          dest: "/mnt/idan-is-loser"
-          tag: "idan-share"
+          src: "/media"
+          dest: "/media"
+          tag: "media-share"
 
