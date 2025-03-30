@@ -5,3 +5,4 @@ memory: 2048
 cores: 2
 proxmox_storage: "local-lvm"
 cloud_image: "/var/lib/vz/template/iso/noble-server-cloudimg-amd64.img"
+image_storage: "local"

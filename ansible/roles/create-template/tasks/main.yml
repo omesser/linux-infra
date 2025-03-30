@@ -1,48 +1,62 @@
 ---
+# Checking if the template exists
 - name: Remove any existing VM with template ID
   shell: |
-    qm unlock {{ template_vmid }} || true
-    qm destroy {{ template_vmid }} || true
+    qm unlock {{ template.vmid }} || true
+    qm destroy {{ template.vmid }} || true
 
-- name: Create the basic network for the vm template ( currently only bridge )
-  include_tasks: create_network.yml
 
-- name: Create VM with cloud-init parameters for template
-  shell: |
-    qm create {{ template_vmid }} \
-      --name {{ template_name }} \
-      --ciuser {{ cloud_init_user }} \
-      --cipassword {{ cloud_init_password }} \
-      --net0 virtio,bridge={{ net_bridge.name }} \
-      --memory {{ memory }} \
-      --cores {{ cores }} \
-      --scsihw {{ scsihw }} \
-      --ipconfig0 ip=dhcp \
-      --ostype l26 \
-      --agent 1
-  args:
-    executable: /bin/bash
+# https://galaxy.ansible.com/ui/repo/published/community/general/content/module/proxmox_kvm/
+
+- name: Create VM with cloud-init parameters for template 
+  community.general.proxmox_kvm:
+    api_host: "{{ machine_config.proxmox_host_ip }}"
+    api_user: "{{ machine_config.proxmox_user }}"
+    api_password: "{{ machine_config.proxmox_user_password }}"
+    node: "{{ machine_config.proxmox_node }}"
+    name: "{{ template_name }}"
+    vmid: "{{ template.vmid }}"
+    ciuser: "{{ cloud_init_user }}"
+    cipassword: "{{ cloud_init_password }}"
+    cores: "{{ cores }}"
+    memory: "{{ memory }}"
+    
+    ipconfig: "{{ template.ipconfig }}"
+    net: "{{ template.net }}"
+
+    ide:
+      ide2: "{{ proxmox_storage }}:cloudinit"
+
+
+    boot: "order=scsi0"
+    ostype: "l26"
+    agent: 1
+    scsihw: "{{ scsihw }}"
+
+
+# Tried to do the next part using this to do what we needed but couldn't so you can read about it.
+# https://galaxy.ansible.com/ui/repo/published/community/general/content/module/proxmox_disk/
+
+
+# Importing the linux image (cloud image and not the cloud init disk!) 
+# to a disk that will later be attached to the template as boot device
 
 - name: Import disk image into template VM
   shell: >
-    qm importdisk {{ template_vmid }} {{ cloud_image }} {{ template_root_storage }}
+    qm importdisk {{ template.vmid }} {{template.cloud_image }} {{ template.root_storage }}
   register: import_disk
-
-- name: Attach disk and add cloud-init drive to template VM
+    
+- name: Attach disk to template VM
   shell: |
-    qm set {{ template_vmid }} \
-      --scsi0 {{ template_root_storage }}:vm-{{ template_vmid }}-disk-0 \
-      --boot order=scsi0 \
-      --ide2 {{ template_root_storage }}:cloudinit
+    qm set {{ template.vmid }} \
+      --scsi0 {{ template.root_storage }}:vm-{{ template.vmid }}-disk-0
   args:
     executable: /bin/bash
 
-- name: Resize disk (if needed)
-  shell: >
-    qm resize {{ template_vmid }} scsi0 +20G
-  register: resize_disk
 
+
+# Making this VM a template
 - name: Convert VM to a template
   shell: >
-    qm template {{ template_vmid }}
+    qm template {{ template.vmid }}
   register: convert_template
