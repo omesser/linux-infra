@@ -51,6 +51,18 @@
     update: True                               # Must be here to apply the update
     update_unsafe: True                        # Must be here to apply the update
 
+
+# https://galaxy.ansible.com/ui/repo/published/community/general/content/module/proxmox_disk/
+- name: Resize the root storage if needed
+  community.general.proxmox_disk:
+    api_host: "{{ proxmox_host_ip }}"
+    api_user: "{{ proxmox_user }}"
+    api_password: "{{ proxmox_user_password }}"
+    name: "{{ vm_params.name | default(vm_name) }}"
+    disk: scsi0
+    size: "+{{ vm_params.extend_root_size }}"
+    state: resized
+
 - name: Debug - Finished creating the VM
   debug:
     msg: "Finished Creating VM {{ vm_name }}"

@@ -47,6 +47,7 @@ machines:
         sockets: 2
         cores: 20
         memory: 4096
+        extend_root_size: 10G
         gpu: true
 
         accessable_ip: "40.0.0.2" # The IP used to connect to the VM, later it will be taken from the ipconfig part
